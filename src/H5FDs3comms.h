@@ -4,7 +4,7 @@
  *                                                                           *
  * This file is part of HDF5.  The full HDF5 copyright notice, including     *
  * terms governing use, modification, and redistribution, is contained in    *
- * the LICENSE file, which can be found at the root of the source code       *
+ * the COPYING file, which can be found at the root of the source code       *
  * distribution tree, or in https://www.hdfgroup.org/licenses.               *
  * If you do not have access to either file, you may request a copy from     *
  * help@hdfgroup.org.                                                        *
@@ -452,37 +452,59 @@ typedef struct {
 extern "C" {
 #endif
 
-/* HTTP request buffer routines */
-H5_DLL hrb_t *H5FD_s3comms_hrb_init_request(const char *verb, const char *resource, const char *host);
-H5_DLL herr_t H5FD_s3comms_hrb_destroy(hrb_t *buf);
+/*******************************************
+ * DECLARATION OF HTTP FIELD LIST ROUTINES *
+ *******************************************/
+
 H5_DLL herr_t H5FD_s3comms_hrb_node_set(hrb_node_t **L, const char *name, const char *value);
 
-/* S3 request buffer routines */
+/***********************************************
+ * DECLARATION OF HTTP REQUEST BUFFER ROUTINES *
+ ***********************************************/
+
+H5_DLL herr_t H5FD_s3comms_hrb_destroy(hrb_t **buf);
+
+H5_DLL hrb_t *H5FD_s3comms_hrb_init_request(const char *verb, const char *resource, const char *host);
+
+/*************************************
+ * DECLARATION OF S3REQUEST ROUTINES *
+ *************************************/
+
+H5_DLL herr_t H5FD_s3comms_s3r_close(s3r_t *handle);
+
+H5_DLL size_t H5FD_s3comms_s3r_get_filesize(s3r_t *handle);
+
 H5_DLL s3r_t *H5FD_s3comms_s3r_open(const char url[], const char region[], const char id[],
                                     const unsigned char signing_key[], const char token[]);
-H5_DLL herr_t H5FD_s3comms_s3r_close(s3r_t *handle);
-H5_DLL size_t H5FD_s3comms_s3r_get_filesize(s3r_t *handle);
+
 H5_DLL herr_t H5FD_s3comms_s3r_read(s3r_t *handle, haddr_t offset, size_t len, void *dest);
 
-/* Functions that construct AWS things */
-H5_DLL herr_t H5FD_s3comms_make_aws_canonical_request(char *canonical_request_dest, int cr_size,
-                                                      char *signed_headers_dest, int sh_size,
-                                                      hrb_t *http_request);
-H5_DLL herr_t H5FD_s3comms_make_aws_signing_key(unsigned char *md, const char *secret, const char *region,
-                                                const char *iso8601now);
-H5_DLL herr_t H5FD_s3comms_make_aws_stringtosign(char *dest, const char *req_str, const char *now,
-                                                 const char *region);
+/*********************************
+ * DECLARATION OF OTHER ROUTINES *
+ *********************************/
 
-/* Misc routines */
 H5_DLL struct tm *gmnow(void);
-H5_DLL herr_t     H5FD_s3comms_free_purl(parsed_url_t *purl);
 
-/* Testing routines */
-#ifdef H5FD_S3COMMS_TESTING
+H5_DLL herr_t H5FD_s3comms_aws_canonical_request(char *canonical_request_dest, int cr_size,
+                                                 char *signed_headers_dest, int sh_size, hrb_t *http_request);
+
+H5_DLL herr_t H5FD_s3comms_bytes_to_hex(char *dest, const unsigned char *msg, size_t msg_len, bool lowercase);
+
+H5_DLL herr_t H5FD_s3comms_free_purl(parsed_url_t *purl);
+
+H5_DLL herr_t H5FD_s3comms_HMAC_SHA256(const unsigned char *key, size_t key_len, const char *msg,
+                                       size_t msg_len, char *dest);
+
 H5_DLL herr_t H5FD_s3comms_load_aws_profile(const char *name, char *key_id_out, char *secret_access_key_out,
                                             char *aws_region_out);
-#endif /* H5FD_S3COMMS_TESTING */
 
+H5_DLL herr_t H5FD_s3comms_parse_url(const char *str, parsed_url_t **purl);
+
+H5_DLL herr_t H5FD_s3comms_signing_key(unsigned char *md, const char *secret, const char *region,
+                                       const char *iso8601now);
+
+H5_DLL herr_t H5FD_s3comms_tostringtosign(char *dest, const char *req_str, const char *now,
+                                          const char *region);
 #ifdef __cplusplus
 }
 #endif

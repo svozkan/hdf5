@@ -4,7 +4,7 @@
 #
 # This file is part of HDF5.  The full HDF5 copyright notice, including
 # terms governing use, modification, and redistribution, is contained in
-# the LICENSE file, which can be found at the root of the source code
+# the COPYING file, which can be found at the root of the source code
 # distribution tree, or in https://www.hdfgroup.org/licenses.
 # If you do not have access to either file, you may request a copy from
 # help@hdfgroup.org.
@@ -180,10 +180,10 @@ endif ()
 HDF_README_PROPERTIES(HDF5_BUILD_FORTRAN)
 
 #-----------------------------------------------------------------------------
-# Configure the LICENSE.txt file for the windows binary package
+# Configure the COPYING.txt file for the windows binary package
 #-----------------------------------------------------------------------------
 if (WIN32)
-  configure_file (${HDF5_SOURCE_DIR}/LICENSE ${HDF5_BINARY_DIR}/LICENSE.txt @ONLY)
+  configure_file (${HDF5_SOURCE_DIR}/COPYING ${HDF5_BINARY_DIR}/COPYING.txt @ONLY)
 endif ()
 
 #-----------------------------------------------------------------------------
@@ -191,7 +191,7 @@ endif ()
 #-----------------------------------------------------------------------------
 if (NOT HDF5_EXTERNALLY_CONFIGURED)
   install (
-      FILES ${HDF5_SOURCE_DIR}/LICENSE
+      FILES ${HDF5_SOURCE_DIR}/COPYING
       DESTINATION ${HDF5_INSTALL_DATA_DIR}
       COMPONENT hdfdocuments
   )
@@ -255,7 +255,7 @@ if (NOT HDF5_EXTERNALLY_CONFIGURED AND NOT HDF5_NO_PACKAGES)
   set (CPACK_PACKAGE_VERSION_MAJOR "${HDF5_PACKAGE_VERSION_MAJOR}")
   set (CPACK_PACKAGE_VERSION_MINOR "${HDF5_PACKAGE_VERSION_MINOR}")
   set (CPACK_PACKAGE_VERSION_PATCH "")
-  set (CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
+  set (CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
   if (EXISTS "${HDF5_SOURCE_DIR}/release_docs")
     set (CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/release_docs/RELEASE.txt")
     set (CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/release_docs/RELEASE.txt")
@@ -321,7 +321,7 @@ if (NOT HDF5_EXTERNALLY_CONFIGURED AND NOT HDF5_NO_PACKAGES)
 #  With CPACK_WIX_LICENSE_RTF you can override the license file used by the
 #  WiX Generator in case CPACK_RESOURCE_FILE_LICENSE is in an unsupported
 #  format or the .txt -> .rtf conversion does not work as expected.
-    set (CPACK_RESOURCE_FILE_LICENSE "${HDF5_BINARY_DIR}/LICENSE.txt")
+    set (CPACK_RESOURCE_FILE_LICENSE "${HDF5_BINARY_DIR}/COPYING.txt")
 # .. variable:: CPACK_WIX_PRODUCT_ICON
 #  The Icon shown next to the program name in Add/Remove programs.
     set(CPACK_WIX_PRODUCT_ICON "${HDF_RESOURCES_DIR}\\\\hdf.ico")
@@ -465,12 +465,11 @@ The HDF5 data model, file format, API, library, and tools are open and distribut
         endif ()
       endif ()
       if (H5_SZIP_FOUND AND SZIP_USE_EXTERNAL)
-        set (SZIP_PROJNAME "${LIBAEC_PACKAGE_NAME}")
         if (WIN32)
-          set (CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${H5_SZIP_INCLUDE_DIR_GEN};${SZIP_PROJNAME};ALL;/")
+          set (CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${H5_SZIP_INCLUDE_DIR_GEN};SZIP;ALL;/")
         else ()
-          set (CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${H5_SZIP_INCLUDE_DIR_GEN};${SZIP_PROJNAME};libraries;/")
-          set (CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${H5_SZIP_INCLUDE_DIR_GEN};${SZIP_PROJNAME};configinstall;/")
+          set (CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${H5_SZIP_INCLUDE_DIR_GEN};SZIP;libraries;/")
+          set (CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${H5_SZIP_INCLUDE_DIR_GEN};SZIP;configinstall;/")
         endif ()
       endif ()
       if (PLUGIN_FOUND AND PLUGIN_USE_EXTERNAL)

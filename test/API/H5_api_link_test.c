@@ -4,7 +4,7 @@
  *                                                                           *
  * This file is part of HDF5.  The full HDF5 copyright notice, including     *
  * terms governing use, modification, and redistribution, is contained in    *
- * the LICENSE file, which can be found at the root of the source code       *
+ * the COPYING file, which can be found at the root of the source code       *
  * distribution tree, or in https://www.hdfgroup.org/licenses.               *
  * If you do not have access to either file, you may request a copy from     *
  * help@hdfgroup.org.                                                        *
@@ -16,63 +16,62 @@
  * TODO: add link tests for short-circuit success in operator callback
  */
 
-static void print_link_test_header(void *params);
-static void test_create_hard_link(void *params);
-static void test_create_hard_link_long_name(void *params);
-static void test_create_hard_link_many(void *params);
-static void test_create_hard_link_same_loc(void *params);
-static void test_create_hard_link_invalid_params(void *params);
-static void test_create_soft_link_existing_relative(void *params);
-static void test_create_soft_link_existing_absolute(void *params);
-static void test_create_soft_link_dangling_relative(void *params);
-static void test_create_soft_link_dangling_absolute(void *params);
-static void test_create_soft_link_long_name(void *params);
-static void test_create_soft_link_many(void *params);
-static void test_create_soft_link_invalid_params(void *params);
-static void test_create_external_link(void *params);
-static void test_create_external_link_dangling(void *params);
-static void test_create_external_link_multi(void *params);
-static void test_create_external_link_ping_pong(void *params);
-static void test_create_external_link_invalid_params(void *params);
-static void test_create_user_defined_link(void *params);
-static void test_create_user_defined_link_invalid_params(void *params);
-static void test_delete_link(void *params);
-static void test_delete_link_reset_grp_max_crt_order(void *params);
-static void test_delete_link_invalid_params(void *params);
-static void test_copy_link(void *params);
-static void test_copy_links_into_group_with_links(void *params);
-static void test_copy_link_across_files(void *params);
-static void test_copy_link_invalid_params(void *params);
-static void test_move_link(void *params);
-static void test_move_links_into_group_with_links(void *params);
-static void test_move_link_across_files(void *params);
-static void test_move_link_reset_grp_max_crt_order(void *params);
-static void test_move_link_invalid_params(void *params);
-static void test_get_link_val(void *params);
-static void test_get_link_val_invalid_params(void *params);
-static void test_get_link_info(void *params);
-static void test_get_link_info_invalid_params(void *params);
-static void test_get_link_name(void *params);
-static void test_get_link_name_invalid_params(void *params);
-static void test_link_iterate_hard_links(void *params);
-static void test_link_iterate_soft_links(void *params);
-static void test_link_iterate_external_links(void *params);
-static void test_link_iterate_ud_links(void *params);
-static void test_link_iterate_mixed_links(void *params);
-static void test_link_iterate_invalid_params(void *params);
-static void test_link_iterate_0_links(void *params);
-static void test_link_visit_hard_links_no_cycles(void *params);
-static void test_link_visit_soft_links_no_cycles(void *params);
-static void test_link_visit_external_links_no_cycles(void *params);
-static void test_link_visit_ud_links_no_cycles(void *params);
-static void test_link_visit_mixed_links_no_cycles(void *params);
-static void test_link_visit_hard_links_cycles(void *params);
-static void test_link_visit_soft_links_cycles(void *params);
-static void test_link_visit_external_links_cycles(void *params);
-static void test_link_visit_ud_links_cycles(void *params);
-static void test_link_visit_mixed_links_cycles(void *params);
-static void test_link_visit_invalid_params(void *params);
-static void test_link_visit_0_links(void *params);
+static int test_create_hard_link(void);
+static int test_create_hard_link_long_name(void);
+static int test_create_hard_link_many(void);
+static int test_create_hard_link_same_loc(void);
+static int test_create_hard_link_invalid_params(void);
+static int test_create_soft_link_existing_relative(void);
+static int test_create_soft_link_existing_absolute(void);
+static int test_create_soft_link_dangling_relative(void);
+static int test_create_soft_link_dangling_absolute(void);
+static int test_create_soft_link_long_name(void);
+static int test_create_soft_link_many(void);
+static int test_create_soft_link_invalid_params(void);
+static int test_create_external_link(void);
+static int test_create_external_link_dangling(void);
+static int test_create_external_link_multi(void);
+static int test_create_external_link_ping_pong(void);
+static int test_create_external_link_invalid_params(void);
+static int test_create_user_defined_link(void);
+static int test_create_user_defined_link_invalid_params(void);
+static int test_delete_link(void);
+static int test_delete_link_reset_grp_max_crt_order(void);
+static int test_delete_link_invalid_params(void);
+static int test_copy_link(void);
+static int test_copy_links_into_group_with_links(void);
+static int test_copy_link_across_files(void);
+static int test_copy_link_invalid_params(void);
+static int test_move_link(void);
+static int test_move_links_into_group_with_links(void);
+static int test_move_link_across_files(void);
+static int test_move_link_reset_grp_max_crt_order(void);
+static int test_move_link_invalid_params(void);
+static int test_get_link_val(void);
+static int test_get_link_val_invalid_params(void);
+static int test_get_link_info(void);
+static int test_get_link_info_invalid_params(void);
+static int test_get_link_name(void);
+static int test_get_link_name_invalid_params(void);
+static int test_link_iterate_hard_links(void);
+static int test_link_iterate_soft_links(void);
+static int test_link_iterate_external_links(void);
+static int test_link_iterate_ud_links(void);
+static int test_link_iterate_mixed_links(void);
+static int test_link_iterate_invalid_params(void);
+static int test_link_iterate_0_links(void);
+static int test_link_visit_hard_links_no_cycles(void);
+static int test_link_visit_soft_links_no_cycles(void);
+static int test_link_visit_external_links_no_cycles(void);
+static int test_link_visit_ud_links_no_cycles(void);
+static int test_link_visit_mixed_links_no_cycles(void);
+static int test_link_visit_hard_links_cycles(void);
+static int test_link_visit_soft_links_cycles(void);
+static int test_link_visit_external_links_cycles(void);
+static int test_link_visit_ud_links_cycles(void);
+static int test_link_visit_mixed_links_cycles(void);
+static int test_link_visit_invalid_params(void);
+static int test_link_visit_0_links(void);
 
 static herr_t link_iter_hard_links_cb(hid_t group_id, const char *name, const H5L_info2_t *info,
                                       void *op_data);
@@ -107,23 +106,74 @@ static herr_t link_visit_invalid_params_cb(hid_t group_id, const char *name, con
                                            void *op_data);
 static herr_t link_visit_0_links_cb(hid_t group_id, const char *name, const H5L_info2_t *info, void *op_data);
 
-static void
-print_link_test_header(void H5_ATTR_UNUSED *params)
-{
-    printf("\n");
-    printf("**********************************************\n");
-    printf("*                                            *\n");
-    printf("*              API Link Tests                *\n");
-    printf("*                                            *\n");
-    printf("**********************************************\n\n");
-}
+/*
+ * The array of link tests to be performed.
+ */
+static int (*link_tests[])(void) = {
+    test_create_hard_link,
+    test_create_hard_link_long_name,
+    test_create_hard_link_many,
+    test_create_hard_link_same_loc,
+    test_create_hard_link_invalid_params,
+    test_create_soft_link_existing_relative,
+    test_create_soft_link_existing_absolute,
+    test_create_soft_link_dangling_relative,
+    test_create_soft_link_dangling_absolute,
+    test_create_soft_link_long_name,
+    test_create_soft_link_many,
+    test_create_soft_link_invalid_params,
+    test_create_external_link,
+    test_create_external_link_dangling,
+    test_create_external_link_multi,
+    test_create_external_link_ping_pong,
+    test_create_external_link_invalid_params,
+    test_create_user_defined_link,
+    test_create_user_defined_link_invalid_params,
+    test_delete_link,
+    test_delete_link_reset_grp_max_crt_order,
+    test_delete_link_invalid_params,
+    test_copy_link,
+    test_copy_links_into_group_with_links,
+    test_copy_link_across_files,
+    test_copy_link_invalid_params,
+    test_move_link,
+    test_move_links_into_group_with_links,
+    test_move_link_across_files,
+    test_move_link_reset_grp_max_crt_order,
+    test_move_link_invalid_params,
+    test_get_link_val,
+    test_get_link_val_invalid_params,
+    test_get_link_info,
+    test_get_link_info_invalid_params,
+    test_get_link_name,
+    test_get_link_name_invalid_params,
+    test_link_iterate_hard_links,
+    test_link_iterate_soft_links,
+    test_link_iterate_external_links,
+    test_link_iterate_ud_links,
+    test_link_iterate_mixed_links,
+    test_link_iterate_invalid_params,
+    test_link_iterate_0_links,
+    test_link_visit_hard_links_no_cycles,
+    test_link_visit_soft_links_no_cycles,
+    test_link_visit_external_links_no_cycles,
+    test_link_visit_ud_links_no_cycles,
+    test_link_visit_mixed_links_no_cycles,
+    test_link_visit_hard_links_cycles,
+    test_link_visit_soft_links_cycles,
+    test_link_visit_external_links_cycles,
+    test_link_visit_ud_links_cycles,
+    test_link_visit_mixed_links_cycles,
+    test_link_visit_invalid_params,
+    test_link_visit_0_links,
+};
 
 /*
  * A test to check that a hard link can be created
  * using H5Lcreate_hard.
  */
-static void
-test_create_hard_link(void H5_ATTR_UNUSED *params)
+static int
+test_create_hard_link(void)
 {
     htri_t link_exists;
     hid_t  file_id         = H5I_INVALID_HID;
@@ -137,7 +187,7 @@ test_create_hard_link(void H5_ATTR_UNUSED *params)
         SKIPPED();
         printf("    API functions for basic file, group, link, or hard link aren't supported with this "
                "connector\n");
-        return;
+        return 0;
     }
 
     if ((file_id = H5Fopen(H5_api_test_filename, H5F_ACC_RDWR, H5P_DEFAULT)) < 0) {
@@ -187,7 +237,7 @@ test_create_hard_link(void H5_ATTR_UNUSED *params)
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -198,15 +248,15 @@ error:
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 
 /*
  * A test to check that a hard link with a long name can be created
  * using H5Lcreate_hard.
  */
-static void
-test_create_hard_link_long_name(void H5_ATTR_UNUSED *params)
+static int
+test_create_hard_link_long_name(void)
 {
     htri_t link_exists;
     hid_t  file_id = H5I_INVALID_HID;
@@ -224,7 +274,7 @@ test_create_hard_link_long_name(void H5_ATTR_UNUSED *params)
         SKIPPED();
         printf("    API functions for basic file, group, link, or hard link aren't supported with this "
                "connector\n");
-        return;
+        return 0;
     }
 
     if ((file_id = H5Fopen(H5_api_test_filename, H5F_ACC_RDWR, H5P_DEFAULT)) < 0) {
@@ -251,6 +301,10 @@ test_create_hard_link_long_name(void H5_ATTR_UNUSED *params)
         printf("    couldn't get VOL connector name\n");
         goto error;
     }
+
+    /** for DAOS VOL, max link name supported is 99 (Lexical key) */
+    if (strcmp(vol_name, "daos") == 0)
+        name_len = 99;
 
     /* Construct very long file name */
     if ((objname = (char *)malloc((size_t)(name_len + 1))) == NULL)
@@ -292,7 +346,7 @@ test_create_hard_link_long_name(void H5_ATTR_UNUSED *params)
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -306,21 +360,21 @@ error:
     if (objname)
         free(objname);
 
-    return;
+    return 1;
 }
 
 /*
  * A test to check that many hard links can be created
  * using H5Lcreate_hard.
  */
-static void
-test_create_hard_link_many(void H5_ATTR_UNUSED *params)
+static int
+test_create_hard_link_many(void)
 {
     htri_t link_exists;
     hid_t  file_id         = H5I_INVALID_HID;
     hid_t  container_group = H5I_INVALID_HID;
     hid_t  group_id = H5I_INVALID_HID, group_id2 = H5I_INVALID_HID;
-    bool   valid_name_matched = false;
+    bool   valid_name_matched = FALSE;
     char   objname[HARD_LINK_TEST_GROUP_MANY_NAME_BUF_SIZE]; /* Object name */
 
     TESTING("hard link creation of many links");
@@ -331,7 +385,7 @@ test_create_hard_link_many(void H5_ATTR_UNUSED *params)
         SKIPPED();
         printf(
             "    API functions for basic file, group, or hard link aren't supported with this connector\n");
-        return;
+        return 0;
     }
 
     if ((file_id = H5Fopen(H5_api_test_filename, H5F_ACC_RDWR, H5P_DEFAULT)) < 0) {
@@ -491,7 +545,7 @@ test_create_hard_link_many(void H5_ATTR_UNUSED *params)
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -503,15 +557,15 @@ error:
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 
 /*
  * A test to check that behavior is correct when using
  * the H5L_SAME_LOC macro for H5Lcreate_hard().
  */
-static void
-test_create_hard_link_same_loc(void H5_ATTR_UNUSED *params)
+static int
+test_create_hard_link_same_loc(void)
 {
     htri_t link_exists;
     hid_t  file_id         = H5I_INVALID_HID;
@@ -525,7 +579,7 @@ test_create_hard_link_same_loc(void H5_ATTR_UNUSED *params)
         SKIPPED();
         printf("    API functions for basic file, group, link, or hard link aren't supported with this "
                "connector\n");
-        return;
+        return 0;
     }
 
     TESTING_2("test setup");
@@ -623,7 +677,7 @@ test_create_hard_link_same_loc(void H5_ATTR_UNUSED *params)
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -634,22 +688,22 @@ error:
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 
 /*
  * A test to check that a hard link can't be created when
  * H5Lcreate_hard is passed invalid parameters.
  */
-static void
-test_create_hard_link_invalid_params(void H5_ATTR_UNUSED *params)
+static int
+test_create_hard_link_invalid_params(void)
 {
     herr_t err_ret = -1;
     htri_t link_exists;
     hid_t  file_id         = H5I_INVALID_HID;
     hid_t  container_group = H5I_INVALID_HID, group_id = H5I_INVALID_HID;
-    char   ext_link_filename[H5_API_TEST_FILENAME_MAX_LENGTH] = {0};
-    hid_t  ext_file_id                                        = H5I_INVALID_HID;
+    char   ext_link_filename[H5_API_TEST_FILENAME_MAX_LENGTH];
+    hid_t  ext_file_id = H5I_INVALID_HID;
 
     TESTING_MULTIPART("hard link creation with invalid parameters");
 
@@ -659,7 +713,7 @@ test_create_hard_link_invalid_params(void H5_ATTR_UNUSED *params)
         SKIPPED();
         printf("    API functions for basic file, group, link, or hard link aren't supported with this "
                "connector\n");
-        return;
+        return 0;
     }
 
     TESTING_2("test setup");
@@ -897,18 +951,6 @@ test_create_hard_link_invalid_params(void H5_ATTR_UNUSED *params)
                 PART_ERROR(H5Lcreate_hard_across_files);
             }
 
-            if (H5Fclose(ext_file_id) < 0) {
-                H5_FAILED();
-                printf("    couldn't close external file '%s'\n", ext_link_filename);
-                PART_ERROR(H5Lcreate_hard_across_files);
-            }
-
-            if (remove_test_file(NULL, ext_link_filename) < 0) {
-                H5_FAILED();
-                printf("    failed to delete external file '%s'\n", ext_link_filename);
-                PART_ERROR(H5Lcreate_hard_across_files);
-            }
-
             PASSED();
         }
         PART_END(H5Lcreate_hard_across_files);
@@ -940,6 +982,8 @@ test_create_hard_link_invalid_params(void H5_ATTR_UNUSED *params)
 
     TESTING_2("test cleanup");
 
+    if (H5Fclose(ext_file_id) < 0)
+        TEST_ERROR;
     if (H5Gclose(group_id) < 0)
         TEST_ERROR;
     if (H5Gclose(container_group) < 0)
@@ -949,7 +993,7 @@ test_create_hard_link_invalid_params(void H5_ATTR_UNUSED *params)
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -958,19 +1002,18 @@ error:
         H5Gclose(container_group);
         H5Fclose(ext_file_id);
         H5Fclose(file_id);
-        remove_test_file(NULL, ext_link_filename);
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 } /* test_create_hard_link_invalid_params */
 
 /*
  * A test to check that a soft link, which points to an
  * existing object with a relative path, can be created.
  */
-static void
-test_create_soft_link_existing_relative(void H5_ATTR_UNUSED *params)
+static int
+test_create_soft_link_existing_relative(void)
 {
     htri_t link_exists;
     hid_t  file_id         = H5I_INVALID_HID;
@@ -985,7 +1028,7 @@ test_create_soft_link_existing_relative(void H5_ATTR_UNUSED *params)
         SKIPPED();
         printf("    API functions for basic file, group, link, or soft link aren't supported with this "
                "connector\n");
-        return;
+        return 0;
     }
 
     if ((file_id = H5Fopen(H5_api_test_filename, H5F_ACC_RDWR, H5P_DEFAULT)) < 0) {
@@ -1057,7 +1100,7 @@ test_create_soft_link_existing_relative(void H5_ATTR_UNUSED *params)
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -1069,15 +1112,15 @@ error:
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 
 /*
  * A test to check that a soft link, which points to an
  * existing object using an absolute path, can be created.
  */
-static void
-test_create_soft_link_existing_absolute(void H5_ATTR_UNUSED *params)
+static int
+test_create_soft_link_existing_absolute(void)
 {
     htri_t link_exists;
     hid_t  file_id         = H5I_INVALID_HID;
@@ -1091,7 +1134,7 @@ test_create_soft_link_existing_absolute(void H5_ATTR_UNUSED *params)
         SKIPPED();
         printf("    API functions for basic file, group, link, or soft link aren't supported with this "
                "connector\n");
-        return;
+        return 0;
     }
 
     if ((file_id = H5Fopen(H5_api_test_filename, H5F_ACC_RDWR, H5P_DEFAULT)) < 0) {
@@ -1152,7 +1195,7 @@ test_create_soft_link_existing_absolute(void H5_ATTR_UNUSED *params)
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -1164,7 +1207,7 @@ error:
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 
 /*
@@ -1172,8 +1215,8 @@ error:
  * an object that doesn't exist by using a relative
  * path, can be created.
  */
-static void
-test_create_soft_link_dangling_relative(void H5_ATTR_UNUSED *params)
+static int
+test_create_soft_link_dangling_relative(void)
 {
     htri_t link_exists;
     hid_t  file_id         = H5I_INVALID_HID;
@@ -1188,7 +1231,7 @@ test_create_soft_link_dangling_relative(void H5_ATTR_UNUSED *params)
         SKIPPED();
         printf("    API functions for basic file, group, link, or soft link aren't supported with this "
                "connector\n");
-        return;
+        return 0;
     }
 
     if ((file_id = H5Fopen(H5_api_test_filename, H5F_ACC_RDWR, H5P_DEFAULT)) < 0) {
@@ -1273,7 +1316,7 @@ test_create_soft_link_dangling_relative(void H5_ATTR_UNUSED *params)
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -1285,7 +1328,7 @@ error:
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 
 /*
@@ -1293,8 +1336,8 @@ error:
  * object that doesn't exist by using an absolute path,
  * can be created.
  */
-static void
-test_create_soft_link_dangling_absolute(void H5_ATTR_UNUSED *params)
+static int
+test_create_soft_link_dangling_absolute(void)
 {
     htri_t link_exists;
     hid_t  file_id         = H5I_INVALID_HID;
@@ -1309,7 +1352,7 @@ test_create_soft_link_dangling_absolute(void H5_ATTR_UNUSED *params)
         SKIPPED();
         printf("    API functions for basic file, group, link, or soft link aren't supported with this "
                "connector\n");
-        return;
+        return 0;
     }
 
     if ((file_id = H5Fopen(H5_api_test_filename, H5F_ACC_RDWR, H5P_DEFAULT)) < 0) {
@@ -1395,7 +1438,7 @@ test_create_soft_link_dangling_absolute(void H5_ATTR_UNUSED *params)
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -1407,15 +1450,15 @@ error:
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 
 /*
  * A test to check that a soft link with a long name can be created
  * using H5Lcreate_soft.
  */
-static void
-test_create_soft_link_long_name(void H5_ATTR_UNUSED *params)
+static int
+test_create_soft_link_long_name(void)
 {
     htri_t link_exists;
     hid_t  file_id = H5I_INVALID_HID;
@@ -1433,7 +1476,7 @@ test_create_soft_link_long_name(void H5_ATTR_UNUSED *params)
         SKIPPED();
         printf("    API functions for basic file, group, link, or soft link aren't supported with this "
                "connector\n");
-        return;
+        return 0;
     }
 
     if ((file_id = H5Fopen(H5_api_test_filename, H5F_ACC_RDWR, H5P_DEFAULT)) < 0) {
@@ -1460,6 +1503,10 @@ test_create_soft_link_long_name(void H5_ATTR_UNUSED *params)
         printf("    couldn't get VOL connector name\n");
         goto error;
     }
+
+    /** for DAOS VOL, max link name supported is 99 (Lexical key) */
+    if (strcmp(vol_name, "daos") == 0)
+        name_len = 99;
 
     /* Construct very long file name */
     if ((objname = (char *)malloc((size_t)(name_len + 1))) == NULL)
@@ -1501,7 +1548,7 @@ test_create_soft_link_long_name(void H5_ATTR_UNUSED *params)
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -1515,18 +1562,18 @@ error:
     if (objname)
         free(objname);
 
-    return;
+    return 1;
 }
 
 /*
  * A test to check that many soft links can be created
  * using H5Lcreate_soft.
  */
-static void
-test_create_soft_link_many(void H5_ATTR_UNUSED *params)
+static int
+test_create_soft_link_many(void)
 {
     htri_t link_exists        = FAIL;
-    bool   valid_name_matched = false;
+    bool   valid_name_matched = FALSE;
     hid_t  file_id            = H5I_INVALID_HID;
     hid_t  container_group    = H5I_INVALID_HID;
     hid_t  group_id           = H5I_INVALID_HID;
@@ -1541,7 +1588,7 @@ test_create_soft_link_many(void H5_ATTR_UNUSED *params)
         SKIPPED();
         printf("    API functions for basic file, group, link, or soft link aren't supported with this "
                "connector\n");
-        return;
+        return 0;
     }
 
     if ((file_id = H5Fopen(H5_api_test_filename, H5F_ACC_RDWR, H5P_DEFAULT)) < 0) {
@@ -1711,7 +1758,7 @@ test_create_soft_link_many(void H5_ATTR_UNUSED *params)
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -1723,15 +1770,15 @@ error:
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 
 /*
  * A test to check that a soft link can't be created
  * when H5Lcreate_soft is passed invalid parameters.
  */
-static void
-test_create_soft_link_invalid_params(void H5_ATTR_UNUSED *params)
+static int
+test_create_soft_link_invalid_params(void)
 {
     herr_t err_ret = -1;
     htri_t link_exists;
@@ -1746,7 +1793,7 @@ test_create_soft_link_invalid_params(void H5_ATTR_UNUSED *params)
         SKIPPED();
         printf(
             "    API functions for basic file, group, or soft link aren't supported with this connector\n");
-        return;
+        return 0;
     }
 
     TESTING_2("test setup");
@@ -1946,7 +1993,7 @@ test_create_soft_link_invalid_params(void H5_ATTR_UNUSED *params)
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -1957,21 +2004,21 @@ error:
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 
 /*
  * A test to check that an external link can be created
  * using H5Lcreate_external.
  */
-static void
-test_create_external_link(void H5_ATTR_UNUSED *params)
+static int
+test_create_external_link(void)
 {
     htri_t link_exists;
     hid_t  file_id         = H5I_INVALID_HID;
     hid_t  container_group = H5I_INVALID_HID, group_id = H5I_INVALID_HID;
-    hid_t  root_id                                            = H5I_INVALID_HID;
-    char   ext_link_filename[H5_API_TEST_FILENAME_MAX_LENGTH] = {0};
+    hid_t  root_id = H5I_INVALID_HID;
+    char   ext_link_filename[H5_API_TEST_FILENAME_MAX_LENGTH];
 
     TESTING("external link creation to existing object");
 
@@ -1981,7 +2028,7 @@ test_create_external_link(void H5_ATTR_UNUSED *params)
         SKIPPED();
         printf("    API functions for basic file, group, link, or external link aren't supported "
                "with this connector\n");
-        return;
+        return 0;
     }
 
     snprintf(ext_link_filename, H5_API_TEST_FILENAME_MAX_LENGTH, "%s%s", test_path_prefix,
@@ -2050,12 +2097,10 @@ test_create_external_link(void H5_ATTR_UNUSED *params)
         TEST_ERROR;
     if (H5Fclose(file_id) < 0)
         TEST_ERROR;
-    if (remove_test_file(NULL, ext_link_filename) < 0)
-        TEST_ERROR;
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -2064,11 +2109,10 @@ error:
         H5Gclose(group_id);
         H5Gclose(container_group);
         H5Fclose(file_id);
-        remove_test_file(NULL, ext_link_filename);
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 
 /*
@@ -2076,14 +2120,14 @@ error:
  * object that doesn't exist by using an absolute path, can
  * be created.
  */
-static void
-test_create_external_link_dangling(void H5_ATTR_UNUSED *params)
+static int
+test_create_external_link_dangling(void)
 {
     htri_t link_exists;
     hid_t  file_id = H5I_INVALID_HID, ext_file_id = H5I_INVALID_HID;
     hid_t  container_group = H5I_INVALID_HID, group_id = H5I_INVALID_HID;
-    hid_t  object_id                                          = H5I_INVALID_HID;
-    char   ext_link_filename[H5_API_TEST_FILENAME_MAX_LENGTH] = {0};
+    hid_t  object_id = H5I_INVALID_HID;
+    char   ext_link_filename[H5_API_TEST_FILENAME_MAX_LENGTH];
 
     TESTING("dangling external link creation");
 
@@ -2093,7 +2137,7 @@ test_create_external_link_dangling(void H5_ATTR_UNUSED *params)
         SKIPPED();
         printf("    API functions for basic file, group, link, or external link aren't supported "
                "with this connector\n");
-        return;
+        return 0;
     }
 
     snprintf(ext_link_filename, H5_API_TEST_FILENAME_MAX_LENGTH, "%s%s", test_path_prefix,
@@ -2186,12 +2230,10 @@ test_create_external_link_dangling(void H5_ATTR_UNUSED *params)
         TEST_ERROR;
     if (H5Fclose(ext_file_id) < 0)
         TEST_ERROR;
-    if (remove_test_file(NULL, ext_link_filename) < 0)
-        TEST_ERROR;
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -2201,27 +2243,26 @@ error:
         H5Gclose(container_group);
         H5Fclose(file_id);
         H5Fclose(ext_file_id);
-        remove_test_file(NULL, ext_link_filename);
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 
 /*
  * A test to check that an external link to an object
  * that crosses several files using H5Lcreate_external.
  */
-static void
-test_create_external_link_multi(void H5_ATTR_UNUSED *params)
+static int
+test_create_external_link_multi(void)
 {
     hid_t file_id         = H5I_INVALID_HID;
     hid_t container_group = H5I_INVALID_HID, group_id = H5I_INVALID_HID;
     hid_t group_id2 = H5I_INVALID_HID, group_id3 = H5I_INVALID_HID;
-    hid_t root_id                                             = H5I_INVALID_HID;
-    char  ext_link_filename1[H5_API_TEST_FILENAME_MAX_LENGTH] = {0};
-    char  ext_link_filename2[H5_API_TEST_FILENAME_MAX_LENGTH] = {0};
-    char  ext_link_filename3[H5_API_TEST_FILENAME_MAX_LENGTH] = {0};
+    hid_t root_id = H5I_INVALID_HID;
+    char  ext_link_filename1[H5_API_TEST_FILENAME_MAX_LENGTH];
+    char  ext_link_filename2[H5_API_TEST_FILENAME_MAX_LENGTH];
+    char  ext_link_filename3[H5_API_TEST_FILENAME_MAX_LENGTH];
     char  objname[EXTERNAL_LINK_TEST_MULTI_NAME_BUF_SIZE];
 
     TESTING_MULTIPART("external link creation to an object across several files");
@@ -2232,7 +2273,7 @@ test_create_external_link_multi(void H5_ATTR_UNUSED *params)
         SKIPPED();
         printf("    API functions for basic file, group, or external link aren't supported with this "
                "connector\n");
-        return;
+        return 0;
     }
 
     BEGIN_MULTIPART
@@ -2555,14 +2596,7 @@ test_create_external_link_multi(void H5_ATTR_UNUSED *params)
     }
     END_MULTIPART;
 
-    if (remove_test_file(NULL, ext_link_filename1) < 0)
-        TEST_ERROR;
-    if (remove_test_file(NULL, ext_link_filename2) < 0)
-        TEST_ERROR;
-    if (remove_test_file(NULL, ext_link_filename3) < 0)
-        TEST_ERROR;
-
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -2573,13 +2607,10 @@ error:
         H5Gclose(group_id3);
         H5Gclose(container_group);
         H5Fclose(file_id);
-        remove_test_file(NULL, ext_link_filename1);
-        remove_test_file(NULL, ext_link_filename2);
-        remove_test_file(NULL, ext_link_filename3);
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 
 /*
@@ -2593,15 +2624,15 @@ error:
  *       file1:/link5    -> file2: /link6
  *       file2:/link6    -> file1: /final
  */
-static void
-test_create_external_link_ping_pong(void H5_ATTR_UNUSED *params)
+static int
+test_create_external_link_ping_pong(void)
 {
-    hid_t file_id                                             = H5I_INVALID_HID;
-    hid_t group_id                                            = H5I_INVALID_HID;
-    hid_t group_id2                                           = H5I_INVALID_HID;
-    bool  valid_name_matched                                  = false;
-    char  ext_link_filename1[H5_API_TEST_FILENAME_MAX_LENGTH] = {0};
-    char  ext_link_filename2[H5_API_TEST_FILENAME_MAX_LENGTH] = {0};
+    hid_t file_id            = H5I_INVALID_HID;
+    hid_t group_id           = H5I_INVALID_HID;
+    hid_t group_id2          = H5I_INVALID_HID;
+    bool  valid_name_matched = false;
+    char  ext_link_filename1[H5_API_TEST_FILENAME_MAX_LENGTH];
+    char  ext_link_filename2[H5_API_TEST_FILENAME_MAX_LENGTH];
     char  objname[EXTERNAL_LINK_TEST_MULTI_NAME_BUF_SIZE];
 
     TESTING_MULTIPART("external link creation to an object in ping pong style");
@@ -2612,7 +2643,7 @@ test_create_external_link_ping_pong(void H5_ATTR_UNUSED *params)
         SKIPPED();
         printf("    API functions for basic file, group, or external link aren't supported with this "
                "connector\n");
-        return;
+        return 0;
     }
 
     snprintf(ext_link_filename1, H5_API_TEST_FILENAME_MAX_LENGTH, "%s%s", test_path_prefix,
@@ -2853,12 +2884,7 @@ test_create_external_link_ping_pong(void H5_ATTR_UNUSED *params)
     }
     END_MULTIPART;
 
-    if (remove_test_file(NULL, ext_link_filename1) < 0)
-        TEST_ERROR;
-    if (remove_test_file(NULL, ext_link_filename2) < 0)
-        TEST_ERROR;
-
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -2866,26 +2892,24 @@ error:
         H5Gclose(group_id);
         H5Gclose(group_id2);
         H5Fclose(file_id);
-        remove_test_file(NULL, ext_link_filename1);
-        remove_test_file(NULL, ext_link_filename2);
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 
 /*
  * A test to check that an external link can't be created
  * when H5Lcreate_external is passed invalid parameters.
  */
-static void
-test_create_external_link_invalid_params(void H5_ATTR_UNUSED *params)
+static int
+test_create_external_link_invalid_params(void)
 {
     herr_t err_ret = -1;
     htri_t link_exists;
     hid_t  file_id         = H5I_INVALID_HID;
     hid_t  container_group = H5I_INVALID_HID, group_id = H5I_INVALID_HID;
-    char   ext_link_filename[H5_API_TEST_FILENAME_MAX_LENGTH] = {0};
+    char   ext_link_filename[H5_API_TEST_FILENAME_MAX_LENGTH];
 
     TESTING_MULTIPART("H5Lcreate_external with invalid parameters");
 
@@ -2895,7 +2919,7 @@ test_create_external_link_invalid_params(void H5_ATTR_UNUSED *params)
         SKIPPED();
         printf("    API functions for basic file, group, link, or external link aren't supported "
                "with this connector\n");
-        return;
+        return 0;
     }
 
     TESTING_2("test setup");
@@ -3146,12 +3170,10 @@ test_create_external_link_invalid_params(void H5_ATTR_UNUSED *params)
         TEST_ERROR;
     if (H5Fclose(file_id) < 0)
         TEST_ERROR;
-    if (remove_test_file(NULL, ext_link_filename) < 0)
-        TEST_ERROR;
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -3159,18 +3181,17 @@ error:
         H5Gclose(group_id);
         H5Gclose(container_group);
         H5Fclose(file_id);
-        remove_test_file(NULL, ext_link_filename);
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 
 /*
  * A test to check that a user-defined link can be created.
  */
-static void
-test_create_user_defined_link(void H5_ATTR_UNUSED *params)
+static int
+test_create_user_defined_link(void)
 {
     ssize_t udata_size;
     htri_t  link_exists;
@@ -3187,7 +3208,7 @@ test_create_user_defined_link(void H5_ATTR_UNUSED *params)
         printf(
             "    API functions for basic file, group, link, or user-defined link aren't supported with this "
             "connector\n");
-        return;
+        return 0;
     }
 
     if ((file_id = H5Fopen(H5_api_test_filename, H5F_ACC_RDWR, H5P_DEFAULT)) < 0) {
@@ -3241,7 +3262,7 @@ test_create_user_defined_link(void H5_ATTR_UNUSED *params)
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -3252,15 +3273,15 @@ error:
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 
 /*
  * A test to check that H5Lcreate_ud fails when
  * it is given invalid parameters.
  */
-static void
-test_create_user_defined_link_invalid_params(void H5_ATTR_UNUSED *params)
+static int
+test_create_user_defined_link_invalid_params(void)
 {
     ssize_t udata_size;
     htri_t  link_exists;
@@ -3277,7 +3298,7 @@ test_create_user_defined_link_invalid_params(void H5_ATTR_UNUSED *params)
         SKIPPED();
         printf("    API functions for basic file, group, or user-defined link aren't supported with this "
                "connector\n");
-        return;
+        return 0;
     }
 
     TESTING_2("test setup");
@@ -3489,7 +3510,7 @@ test_create_user_defined_link_invalid_params(void H5_ATTR_UNUSED *params)
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -3500,23 +3521,23 @@ error:
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 
 /*
  * A test to check that a link can be deleted
  * using H5Ldelete and H5Ldelete_by_idx.
  */
-static void
-test_delete_link(void H5_ATTR_UNUSED *params)
+static int
+test_delete_link(void)
 {
     htri_t link_exists;
     hid_t  file_id = H5I_INVALID_HID, ext_file_id = H5I_INVALID_HID;
     hid_t  container_group = H5I_INVALID_HID, group_id = H5I_INVALID_HID;
-    hid_t  subgroup_id                                        = H5I_INVALID_HID;
-    hid_t  nested_grp_id                                      = H5I_INVALID_HID;
-    hid_t  gcpl_id                                            = H5I_INVALID_HID;
-    char   ext_link_filename[H5_API_TEST_FILENAME_MAX_LENGTH] = {0};
+    hid_t  subgroup_id   = H5I_INVALID_HID;
+    hid_t  nested_grp_id = H5I_INVALID_HID;
+    hid_t  gcpl_id       = H5I_INVALID_HID;
+    char   ext_link_filename[H5_API_TEST_FILENAME_MAX_LENGTH];
 
     TESTING_MULTIPART("link deletion");
 
@@ -3528,7 +3549,7 @@ test_delete_link(void H5_ATTR_UNUSED *params)
         SKIPPED();
         printf("    API functions for basic file, group, link, hard link, soft link, or external link "
                "aren't supported with this connector\n");
-        return;
+        return 0;
     }
 
     TESTING_2("test setup");
@@ -3861,12 +3882,6 @@ test_delete_link(void H5_ATTR_UNUSED *params)
             if (H5Gclose(subgroup_id) < 0) {
                 H5_FAILED();
                 printf("    failed to close group '%s'\n", LINK_DELETE_TEST_SUBGROUP3_NAME);
-                PART_ERROR(H5Ldelete_external);
-            }
-
-            if (remove_test_file(NULL, ext_link_filename) < 0) {
-                H5_FAILED();
-                printf("    failed to delete external file '%s'\n", ext_link_filename);
                 PART_ERROR(H5Ldelete_external);
             }
 
@@ -6076,12 +6091,6 @@ test_delete_link(void H5_ATTR_UNUSED *params)
                 PART_ERROR(H5Ldelete_by_idx_external_crt_order_increasing);
             }
 
-            if (remove_test_file(NULL, ext_link_filename) < 0) {
-                H5_FAILED();
-                printf("    failed to delete external file '%s'\n", ext_link_filename);
-                PART_ERROR(H5Ldelete_by_idx_external_crt_order_increasing);
-            }
-
             PASSED();
         }
         PART_END(H5Ldelete_by_idx_external_crt_order_increasing);
@@ -6370,12 +6379,6 @@ test_delete_link(void H5_ATTR_UNUSED *params)
                 PART_ERROR(H5Ldelete_by_idx_external_crt_order_decreasing);
             }
 
-            if (remove_test_file(NULL, ext_link_filename) < 0) {
-                H5_FAILED();
-                printf("    failed to delete external file '%s'\n", ext_link_filename);
-                PART_ERROR(H5Ldelete_by_idx_external_crt_order_decreasing);
-            }
-
             PASSED();
         }
         PART_END(H5Ldelete_by_idx_external_crt_order_decreasing);
@@ -6655,12 +6658,6 @@ test_delete_link(void H5_ATTR_UNUSED *params)
             if (H5Gclose(subgroup_id) < 0) {
                 H5_FAILED();
                 printf("    failed to close group '%s'\n", LINK_DELETE_TEST_SUBGROUP15_NAME);
-                PART_ERROR(H5Ldelete_by_idx_external_name_order_increasing);
-            }
-
-            if (remove_test_file(NULL, ext_link_filename) < 0) {
-                H5_FAILED();
-                printf("    failed to delete external file '%s'\n", ext_link_filename);
                 PART_ERROR(H5Ldelete_by_idx_external_name_order_increasing);
             }
 
@@ -6946,12 +6943,6 @@ test_delete_link(void H5_ATTR_UNUSED *params)
                 PART_ERROR(H5Ldelete_by_idx_external_name_order_decreasing);
             }
 
-            if (remove_test_file(NULL, ext_link_filename) < 0) {
-                H5_FAILED();
-                printf("    failed to delete external file '%s'\n", ext_link_filename);
-                PART_ERROR(H5Ldelete_by_idx_external_name_order_decreasing);
-            }
-
             PASSED();
         }
         PART_END(H5Ldelete_by_idx_external_name_order_decreasing);
@@ -7052,7 +7043,7 @@ test_delete_link(void H5_ATTR_UNUSED *params)
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -7063,11 +7054,10 @@ error:
         H5Gclose(container_group);
         H5Fclose(ext_file_id);
         H5Fclose(file_id);
-        remove_test_file(NULL, ext_link_filename);
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 
 /*
@@ -7075,8 +7065,8 @@ error:
  * maximum link creation order value gets reset once
  * all the links have been deleted from the group.
  */
-static void
-test_delete_link_reset_grp_max_crt_order(void H5_ATTR_UNUSED *params)
+static int
+test_delete_link_reset_grp_max_crt_order(void)
 {
     H5G_info_t grp_info;
     size_t     i;
@@ -7095,7 +7085,7 @@ test_delete_link_reset_grp_max_crt_order(void H5_ATTR_UNUSED *params)
         SKIPPED();
         printf("    API functions for basic file, group, link, or creation order "
                "aren't supported with this connector\n");
-        return;
+        return 0;
     }
 
     TESTING_2("test setup");
@@ -7310,7 +7300,7 @@ test_delete_link_reset_grp_max_crt_order(void H5_ATTR_UNUSED *params)
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -7323,11 +7313,11 @@ error:
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 
-static void
-test_delete_link_invalid_params(void H5_ATTR_UNUSED *params)
+static int
+test_delete_link_invalid_params(void)
 {
     htri_t link_exists;
     herr_t err_ret         = -1;
@@ -7343,7 +7333,7 @@ test_delete_link_invalid_params(void H5_ATTR_UNUSED *params)
         SKIPPED();
         printf("    API functions for basic file, group, link, flag by index, or hard link aren't "
                "supported with this connector\n");
-        return;
+        return 0;
     }
 
     TESTING_2("test setup");
@@ -7639,7 +7629,7 @@ test_delete_link_invalid_params(void H5_ATTR_UNUSED *params)
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -7650,20 +7640,20 @@ error:
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 
 /*
  * A test to check that a link can be copied using H5Lcopy.
  */
-static void
-test_copy_link(void H5_ATTR_UNUSED *params)
+static int
+test_copy_link(void)
 {
     htri_t link_exists;
     hid_t  file_id = H5I_INVALID_HID, ext_file_id = H5I_INVALID_HID;
     hid_t  container_group = H5I_INVALID_HID, group_id = H5I_INVALID_HID;
     hid_t  src_grp_id = H5I_INVALID_HID, dst_grp_id = H5I_INVALID_HID;
-    char   ext_link_filename[H5_API_TEST_FILENAME_MAX_LENGTH] = {0};
+    char   ext_link_filename[H5_API_TEST_FILENAME_MAX_LENGTH];
 
     TESTING_MULTIPART("link copying");
 
@@ -7675,7 +7665,7 @@ test_copy_link(void H5_ATTR_UNUSED *params)
         SKIPPED();
         printf("    API functions for basic file, group, link, hard link, soft link, or external link aren't "
                "supported with this connector\n");
-        return;
+        return 0;
     }
 
     TESTING_2("test setup");
@@ -8491,12 +8481,6 @@ test_copy_link(void H5_ATTR_UNUSED *params)
                 PART_ERROR(H5Lcopy_external_no_check);
             }
 
-            if (remove_test_file(NULL, ext_link_filename) < 0) {
-                H5_FAILED();
-                printf("    failed to delete external file '%s'\n", ext_link_filename);
-                PART_ERROR(H5Lcopy_external_no_check);
-            }
-
             PASSED();
         }
         PART_END(H5Lcopy_external_no_check);
@@ -8708,12 +8692,6 @@ test_copy_link(void H5_ATTR_UNUSED *params)
                 PART_ERROR(H5Lcopy_external_check);
             }
 
-            if (remove_test_file(NULL, ext_link_filename) < 0) {
-                H5_FAILED();
-                printf("    failed to delete external file '%s'\n", ext_link_filename);
-                PART_ERROR(H5Lcopy_external_check);
-            }
-
             PASSED();
         }
         PART_END(H5Lcopy_external_check);
@@ -8857,12 +8835,6 @@ test_copy_link(void H5_ATTR_UNUSED *params)
                 PART_ERROR(H5Lcopy_external_same_loc);
             }
 
-            if (remove_test_file(NULL, ext_link_filename) < 0) {
-                H5_FAILED();
-                printf("    failed to delete external file '%s'\n", ext_link_filename);
-                PART_ERROR(H5Lcopy_external_same_loc);
-            }
-
             PASSED();
         }
         PART_END(H5Lcopy_external_same_loc);
@@ -8924,7 +8896,7 @@ test_copy_link(void H5_ATTR_UNUSED *params)
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -8935,11 +8907,10 @@ error:
         H5Gclose(container_group);
         H5Fclose(ext_file_id);
         H5Fclose(file_id);
-        remove_test_file(NULL, ext_link_filename);
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 
 /*
@@ -8951,14 +8922,14 @@ error:
  * H5Lcopy might cause a group to have two links with the same
  * creation order values.
  */
-static void
-test_copy_links_into_group_with_links(void H5_ATTR_UNUSED *params)
+static int
+test_copy_links_into_group_with_links(void)
 {
     TESTING("H5Lcopy adjusting creation order values for copied links");
 
     SKIPPED();
 
-    return;
+    return 1;
 }
 
 /*
@@ -8970,8 +8941,8 @@ test_copy_links_into_group_with_links(void H5_ATTR_UNUSED *params)
  *       copied links retain the properties of the original
  *       links.
  */
-static void
-test_copy_link_across_files(void H5_ATTR_UNUSED *params)
+static int
+test_copy_link_across_files(void)
 {
     TESTING("link copying across files");
 
@@ -8979,23 +8950,23 @@ test_copy_link_across_files(void H5_ATTR_UNUSED *params)
 
     SKIPPED();
 
-    return;
+    return 0;
 }
 
 /*
  * A test to check that a link can't be copied
  * when H5Lcopy is passed invalid parameters.
  */
-static void
-test_copy_link_invalid_params(void H5_ATTR_UNUSED *params)
+static int
+test_copy_link_invalid_params(void)
 {
     herr_t err_ret = -1;
     htri_t link_exists;
     hid_t  file_id         = H5I_INVALID_HID;
     hid_t  container_group = H5I_INVALID_HID, group_id = H5I_INVALID_HID;
     hid_t  src_grp_id = H5I_INVALID_HID, dst_grp_id = H5I_INVALID_HID;
-    char   ext_link_filename[H5_API_TEST_FILENAME_MAX_LENGTH] = {0};
-    hid_t  ext_file_id                                        = H5I_INVALID_HID;
+    char   ext_link_filename[H5_API_TEST_FILENAME_MAX_LENGTH];
+    hid_t  ext_file_id = H5I_INVALID_HID;
 
     TESTING_MULTIPART("H5Lcopy with invalid parameters");
 
@@ -9006,7 +8977,7 @@ test_copy_link_invalid_params(void H5_ATTR_UNUSED *params)
         SKIPPED();
         printf("    API functions for basic file, group, link, or hard links aren't supported with this "
                "connector\n");
-        return;
+        return 0;
     }
 
     TESTING_2("test setup");
@@ -9283,12 +9254,6 @@ test_copy_link_invalid_params(void H5_ATTR_UNUSED *params)
                 PART_ERROR(H5Lcopy_invalid_across_files);
             }
 
-            if (remove_test_file(NULL, ext_link_filename) < 0) {
-                H5_FAILED();
-                printf("    failed to delete external file '%s'\n", ext_link_filename);
-                PART_ERROR(H5Lcopy_invalid_across_files);
-            }
-
             PASSED();
         }
         PART_END(H5Lcopy_invalid_across_files);
@@ -9310,7 +9275,7 @@ test_copy_link_invalid_params(void H5_ATTR_UNUSED *params)
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -9321,25 +9286,24 @@ error:
         H5Gclose(container_group);
         H5Fclose(ext_file_id);
         H5Fclose(file_id);
-        remove_test_file(NULL, ext_link_filename);
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 
 /*
  * A test to check that a link can be moved with H5Lmove.
  */
-static void
-test_move_link(void H5_ATTR_UNUSED *params)
+static int
+test_move_link(void)
 {
     htri_t link_exists;
     hid_t  file_id         = H5I_INVALID_HID;
     hid_t  container_group = H5I_INVALID_HID, group_id = H5I_INVALID_HID;
     hid_t  src_grp_id = H5I_INVALID_HID, dst_grp_id = H5I_INVALID_HID;
-    char   ext_link_filename[H5_API_TEST_FILENAME_MAX_LENGTH] = {0};
-    hid_t  ext_file_id                                        = H5I_INVALID_HID;
+    char   ext_link_filename[H5_API_TEST_FILENAME_MAX_LENGTH];
+    hid_t  ext_file_id = H5I_INVALID_HID;
 
     TESTING_MULTIPART("link moving");
 
@@ -9351,7 +9315,7 @@ test_move_link(void H5_ATTR_UNUSED *params)
         SKIPPED();
         printf("    API functions for basic file, group, link, hard link, soft link, or external link aren't "
                "supported with this connector\n");
-        return;
+        return 0;
     }
 
     TESTING_2("test setup");
@@ -10325,12 +10289,6 @@ test_move_link(void H5_ATTR_UNUSED *params)
                 PART_ERROR(H5Lmove_external_no_check);
             }
 
-            if (remove_test_file(NULL, ext_link_filename) < 0) {
-                H5_FAILED();
-                printf("    failed to delete external file '%s'\n", ext_link_filename);
-                PART_ERROR(H5Lmove_external_no_check);
-            }
-
             PASSED();
         }
         PART_END(H5Lmove_external_no_check);
@@ -10542,12 +10500,6 @@ test_move_link(void H5_ATTR_UNUSED *params)
                 PART_ERROR(H5Lmove_external_check);
             }
 
-            if (remove_test_file(NULL, ext_link_filename) < 0) {
-                H5_FAILED();
-                printf("    failed to delete external file '%s'\n", ext_link_filename);
-                PART_ERROR(H5Lmove_external_check);
-            }
-
             PASSED();
         }
         PART_END(H5Lmove_external_check);
@@ -10687,12 +10639,6 @@ test_move_link(void H5_ATTR_UNUSED *params)
                 PART_ERROR(H5Lmove_external_same_loc);
             }
 
-            if (remove_test_file(NULL, ext_link_filename) < 0) {
-                H5_FAILED();
-                printf("    failed to delete external file '%s'\n", ext_link_filename);
-                PART_ERROR(H5Lmove_external_same_loc);
-            }
-
             PASSED();
         }
         PART_END(H5Lmove_external_same_loc);
@@ -10795,12 +10741,6 @@ test_move_link(void H5_ATTR_UNUSED *params)
                 PART_ERROR(H5Lmove_external_rename);
             }
 
-            if (remove_test_file(NULL, ext_link_filename) < 0) {
-                H5_FAILED();
-                printf("    failed to delete external file '%s'\n", ext_link_filename);
-                PART_ERROR(H5Lmove_external_rename);
-            }
-
             PASSED();
         }
         PART_END(H5Lmove_external_rename);
@@ -10873,7 +10813,7 @@ test_move_link(void H5_ATTR_UNUSED *params)
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -10884,11 +10824,10 @@ error:
         H5Gclose(container_group);
         H5Fclose(file_id);
         H5Fclose(ext_file_id);
-        remove_test_file(NULL, ext_link_filename);
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 
 /*
@@ -10900,8 +10839,8 @@ error:
  * H5Lmove might cause a group to have two links with the same
  * creation order values.
  */
-static void
-test_move_links_into_group_with_links(void H5_ATTR_UNUSED *params)
+static int
+test_move_links_into_group_with_links(void)
 {
     H5L_info2_t link_info;
     size_t      i;
@@ -10920,7 +10859,7 @@ test_move_links_into_group_with_links(void H5_ATTR_UNUSED *params)
         SKIPPED();
         printf("    API functions for basic file, group, link, hard link, or creation order aren't "
                "supported with this connector\n");
-        return;
+        return 0;
     }
 
     if ((file_id = H5Fopen(H5_api_test_filename, H5F_ACC_RDWR, H5P_DEFAULT)) < 0) {
@@ -11061,7 +11000,7 @@ test_move_links_into_group_with_links(void H5_ATTR_UNUSED *params)
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -11075,7 +11014,7 @@ error:
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 
 /*
@@ -11086,8 +11025,8 @@ error:
  * TODO: Ideally, tests should be written to verify that the
  *       moved links retain their original properties.
  */
-static void
-test_move_link_across_files(void H5_ATTR_UNUSED *params)
+static int
+test_move_link_across_files(void)
 {
     TESTING("link moving across files");
 
@@ -11095,7 +11034,7 @@ test_move_link_across_files(void H5_ATTR_UNUSED *params)
 
     SKIPPED();
 
-    return;
+    return 0;
 }
 
 /*
@@ -11103,8 +11042,8 @@ test_move_link_across_files(void H5_ATTR_UNUSED *params)
  * maximum link creation order value gets reset once
  * all the links have been moved out of the group.
  */
-static void
-test_move_link_reset_grp_max_crt_order(void H5_ATTR_UNUSED *params)
+static int
+test_move_link_reset_grp_max_crt_order(void)
 {
     H5G_info_t grp_info;
     size_t     i;
@@ -11123,7 +11062,7 @@ test_move_link_reset_grp_max_crt_order(void H5_ATTR_UNUSED *params)
         SKIPPED();
         printf("    API functions for basic file, group, link, hard link, or creation order aren't "
                "supported with this connector\n");
-        return;
+        return 0;
     }
 
     if ((file_id = H5Fopen(H5_api_test_filename, H5F_ACC_RDWR, H5P_DEFAULT)) < 0) {
@@ -11265,7 +11204,7 @@ test_move_link_reset_grp_max_crt_order(void H5_ATTR_UNUSED *params)
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -11279,23 +11218,23 @@ error:
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 
 /*
  * A test to check that H5Lmove fails when it is given
  * invalid parameters.
  */
-static void
-test_move_link_invalid_params(void H5_ATTR_UNUSED *params)
+static int
+test_move_link_invalid_params(void)
 {
     htri_t link_exists;
     herr_t err_ret         = -1;
     hid_t  file_id         = H5I_INVALID_HID;
     hid_t  container_group = H5I_INVALID_HID, group_id = H5I_INVALID_HID;
     hid_t  src_grp_id = H5I_INVALID_HID, dst_grp_id = H5I_INVALID_HID;
-    char   ext_link_filename[H5_API_TEST_FILENAME_MAX_LENGTH] = {0};
-    hid_t  ext_file_id                                        = H5I_INVALID_HID;
+    char   ext_link_filename[H5_API_TEST_FILENAME_MAX_LENGTH];
+    hid_t  ext_file_id = H5I_INVALID_HID;
 
     TESTING_MULTIPART("H5Lmove with invalid parameters");
 
@@ -11305,7 +11244,7 @@ test_move_link_invalid_params(void H5_ATTR_UNUSED *params)
         SKIPPED();
         printf("    API functions for basic file, group, link, or hard link aren't supported with this "
                "connector\n");
-        return;
+        return 0;
     }
 
     TESTING_2("test setup");
@@ -11645,12 +11584,6 @@ test_move_link_invalid_params(void H5_ATTR_UNUSED *params)
                 PART_ERROR(H5Lmove_across_files);
             }
 
-            if (remove_test_file(NULL, ext_link_filename) < 0) {
-                H5_FAILED();
-                printf("    failed to delete external file '%s'\n", ext_link_filename);
-                PART_ERROR(H5Lmove_across_files);
-            }
-
             PASSED();
         }
         PART_END(H5Lmove_across_files);
@@ -11672,7 +11605,7 @@ test_move_link_invalid_params(void H5_ATTR_UNUSED *params)
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -11683,19 +11616,18 @@ error:
         H5Gclose(container_group);
         H5Fclose(ext_file_id);
         H5Fclose(file_id);
-        remove_test_file(NULL, ext_link_filename);
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 
 /*
  * A test to check that a soft or external link's value can
  * be retrieved by using H5Lget_val and H5Lget_val_by_idx.
  */
-static void
-test_get_link_val(void H5_ATTR_UNUSED *params)
+static int
+test_get_link_val(void)
 {
     H5L_info2_t link_info;
     const char *ext_link_filepath;
@@ -11706,9 +11638,9 @@ test_get_link_val(void H5_ATTR_UNUSED *params)
     char        link_val_buf[GET_LINK_VAL_TEST_LINK_VAL_BUF_SIZE];
     hid_t       file_id = H5I_INVALID_HID, ext_file_id = H5I_INVALID_HID;
     hid_t       container_group = H5I_INVALID_HID, group_id = H5I_INVALID_HID;
-    hid_t       subgroup_id                                        = H5I_INVALID_HID;
-    hid_t       gcpl_id                                            = H5I_INVALID_HID;
-    char        ext_link_filename[H5_API_TEST_FILENAME_MAX_LENGTH] = {0};
+    hid_t       subgroup_id = H5I_INVALID_HID;
+    hid_t       gcpl_id     = H5I_INVALID_HID;
+    char        ext_link_filename[H5_API_TEST_FILENAME_MAX_LENGTH];
 
     TESTING_MULTIPART("link value retrieval");
 
@@ -11719,7 +11651,7 @@ test_get_link_val(void H5_ATTR_UNUSED *params)
         SKIPPED();
         printf("    API functions for basic file, group, link, soft link, external link, or creation "
                "order aren't supported with this connector\n");
-        return;
+        return 0;
     }
 
     TESTING_2("test setup");
@@ -11934,12 +11866,6 @@ test_get_link_val(void H5_ATTR_UNUSED *params)
             if (H5Gclose(subgroup_id) < 0) {
                 H5_FAILED();
                 printf("    failed to close group '%s'\n", GET_LINK_VAL_TEST_SUBGROUP2_NAME);
-                PART_ERROR(H5Lget_val_external);
-            }
-
-            if (remove_test_file(NULL, ext_link_filename) < 0) {
-                H5_FAILED();
-                printf("    failed to delete external file '%s'\n", ext_link_filename);
                 PART_ERROR(H5Lget_val_external);
             }
 
@@ -12975,12 +12901,6 @@ test_get_link_val(void H5_ATTR_UNUSED *params)
                 PART_ERROR(H5Lget_val_by_idx_external_crt_order_increasing);
             }
 
-            if (remove_test_file(NULL, ext_link_filename) < 0) {
-                H5_FAILED();
-                printf("    failed to delete external file '%s'\n", ext_link_filename);
-                PART_ERROR(H5Lget_val_by_idx_external_crt_order_increasing);
-            }
-
             PASSED();
         }
         PART_END(H5Lget_val_by_idx_external_crt_order_increasing);
@@ -13231,12 +13151,6 @@ test_get_link_val(void H5_ATTR_UNUSED *params)
                 PART_ERROR(H5Lget_val_by_idx_external_crt_order_decreasing);
             }
 
-            if (remove_test_file(NULL, ext_link_filename) < 0) {
-                H5_FAILED();
-                printf("    failed to delete external file '%s'\n", ext_link_filename);
-                PART_ERROR(H5Lget_val_by_idx_external_crt_order_decreasing);
-            }
-
             PASSED();
         }
         PART_END(H5Lget_val_by_idx_external_crt_order_decreasing);
@@ -13478,12 +13392,6 @@ test_get_link_val(void H5_ATTR_UNUSED *params)
             if (H5Gclose(subgroup_id) < 0) {
                 H5_FAILED();
                 printf("    failed to close group '%s'\n", GET_LINK_VAL_TEST_SUBGROUP10_NAME);
-                PART_ERROR(H5Lget_val_by_idx_external_name_order_increasing);
-            }
-
-            if (remove_test_file(NULL, ext_link_filename) < 0) {
-                H5_FAILED();
-                printf("    failed to delete external file '%s'\n", ext_link_filename);
                 PART_ERROR(H5Lget_val_by_idx_external_name_order_increasing);
             }
 
@@ -13731,12 +13639,6 @@ test_get_link_val(void H5_ATTR_UNUSED *params)
                 PART_ERROR(H5Lget_val_by_idx_external_name_order_decreasing);
             }
 
-            if (remove_test_file(NULL, ext_link_filename) < 0) {
-                H5_FAILED();
-                printf("    failed to delete external file '%s'\n", ext_link_filename);
-                PART_ERROR(H5Lget_val_by_idx_external_name_order_decreasing);
-            }
-
             PASSED();
         }
         PART_END(H5Lget_val_by_idx_external_name_order_decreasing);
@@ -13829,7 +13731,7 @@ test_get_link_val(void H5_ATTR_UNUSED *params)
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -13840,19 +13742,18 @@ error:
         H5Gclose(container_group);
         H5Fclose(ext_file_id);
         H5Fclose(file_id);
-        remove_test_file(NULL, ext_link_filename);
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 
 /*
  * A test to check that a soft or external link's value can't be
  * retrieved when H5Lget_val(_by_idx) is passed invalid parameters.
  */
-static void
-test_get_link_val_invalid_params(void H5_ATTR_UNUSED *params)
+static int
+test_get_link_val_invalid_params(void)
 {
     H5L_info2_t link_info;
     htri_t      link_exists;
@@ -13872,7 +13773,7 @@ test_get_link_val_invalid_params(void H5_ATTR_UNUSED *params)
         SKIPPED();
         printf("    API functions for basic file, group, link, soft link, external link, or creation "
                "order aren't supported with this connector\n");
-        return;
+        return 0;
     }
 
     TESTING_2("test setup");
@@ -14177,7 +14078,7 @@ test_get_link_val_invalid_params(void H5_ATTR_UNUSED *params)
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -14191,15 +14092,15 @@ error:
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 
 /*
  * A test to check the functionality of H5Lget_info2 and
  * H5Lget_info_by_idx2.
  */
-static void
-test_get_link_info(void H5_ATTR_UNUSED *params)
+static int
+test_get_link_info(void)
 {
     H5L_info2_t link_info;
     const char *ext_objname = "/";
@@ -14207,9 +14108,9 @@ test_get_link_info(void H5_ATTR_UNUSED *params)
     size_t      link_val_size;
     hid_t       file_id = H5I_INVALID_HID, ext_file_id = H5I_INVALID_HID;
     hid_t       container_group = H5I_INVALID_HID, group_id = H5I_INVALID_HID;
-    hid_t       subgroup_id                                        = H5I_INVALID_HID;
-    hid_t       gcpl_id                                            = H5I_INVALID_HID;
-    char        ext_link_filename[H5_API_TEST_FILENAME_MAX_LENGTH] = {0};
+    hid_t       subgroup_id = H5I_INVALID_HID;
+    hid_t       gcpl_id     = H5I_INVALID_HID;
+    char        ext_link_filename[H5_API_TEST_FILENAME_MAX_LENGTH];
 
     TESTING_MULTIPART("link info retrieval");
 
@@ -14221,7 +14122,7 @@ test_get_link_info(void H5_ATTR_UNUSED *params)
         SKIPPED();
         printf("    API functions for basic file, group, link, soft link, hard link, or external link "
                "aren't supported with this connector\n");
-        return;
+        return 0;
     }
 
     TESTING_2("test setup");
@@ -14497,12 +14398,6 @@ test_get_link_info(void H5_ATTR_UNUSED *params)
             if (H5Gclose(subgroup_id) < 0) {
                 H5_FAILED();
                 printf("    failed to close group '%s'\n", GET_LINK_INFO_TEST_SUBGROUP3_NAME);
-                PART_ERROR(H5Lget_info_external);
-            }
-
-            if (remove_test_file(NULL, ext_link_filename) < 0) {
-                H5_FAILED();
-                printf("    failed to delete external file '%s'\n", ext_link_filename);
                 PART_ERROR(H5Lget_info_external);
             }
 
@@ -16176,12 +16071,6 @@ test_get_link_info(void H5_ATTR_UNUSED *params)
                 PART_ERROR(H5Lget_info_by_idx_external_crt_order_increasing);
             }
 
-            if (remove_test_file(NULL, ext_link_filename) < 0) {
-                H5_FAILED();
-                printf("    failed to delete external file '%s'\n", ext_link_filename);
-                PART_ERROR(H5Lget_info_by_idx_external_crt_order_increasing);
-            }
-
             PASSED();
         }
         PART_END(H5Lget_info_by_idx_external_crt_order_increasing);
@@ -16383,12 +16272,6 @@ test_get_link_info(void H5_ATTR_UNUSED *params)
             if (H5Gclose(subgroup_id) < 0) {
                 H5_FAILED();
                 printf("    failed to close group '%s'\n", GET_LINK_INFO_TEST_SUBGROUP14_NAME);
-                PART_ERROR(H5Lget_info_by_idx_external_crt_order_decreasing);
-            }
-
-            if (remove_test_file(NULL, ext_link_filename) < 0) {
-                H5_FAILED();
-                printf("    failed to delete external file '%s'\n", ext_link_filename);
                 PART_ERROR(H5Lget_info_by_idx_external_crt_order_decreasing);
             }
 
@@ -16596,12 +16479,6 @@ test_get_link_info(void H5_ATTR_UNUSED *params)
                 PART_ERROR(H5Lget_info_by_idx_external_name_order_increasing);
             }
 
-            if (remove_test_file(NULL, ext_link_filename) < 0) {
-                H5_FAILED();
-                printf("    failed to delete external file '%s'\n", ext_link_filename);
-                PART_ERROR(H5Lget_info_by_idx_external_name_order_increasing);
-            }
-
             PASSED();
         }
         PART_END(H5Lget_info_by_idx_external_name_order_increasing);
@@ -16806,12 +16683,6 @@ test_get_link_info(void H5_ATTR_UNUSED *params)
                 PART_ERROR(H5Lget_info_by_idx_external_name_order_decreasing);
             }
 
-            if (remove_test_file(NULL, ext_link_filename) < 0) {
-                H5_FAILED();
-                printf("    failed to delete external file '%s'\n", ext_link_filename);
-                PART_ERROR(H5Lget_info_by_idx_external_name_order_decreasing);
-            }
-
             PASSED();
         }
         PART_END(H5Lget_info_by_idx_external_name_order_decreasing);
@@ -16904,7 +16775,7 @@ test_get_link_info(void H5_ATTR_UNUSED *params)
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -16915,19 +16786,18 @@ error:
         H5Gclose(container_group);
         H5Fclose(ext_file_id);
         H5Fclose(file_id);
-        remove_test_file(NULL, ext_link_filename);
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 
 /*
  * A test to check that a link's info can't be retrieved
  * when H5Lget_info(_by_idx)2 is passed invalid parameters.
  */
-static void
-test_get_link_info_invalid_params(void H5_ATTR_UNUSED *params)
+static int
+test_get_link_info_invalid_params(void)
 {
     H5L_info2_t link_info;
     herr_t      err_ret = -1;
@@ -16945,7 +16815,7 @@ test_get_link_info_invalid_params(void H5_ATTR_UNUSED *params)
         SKIPPED();
         printf("    API functions for basic file, group, link, or hard link "
                "aren't supported with this connector\n");
-        return;
+        return 0;
     }
 
     TESTING_2("test setup");
@@ -17239,7 +17109,7 @@ test_get_link_info_invalid_params(void H5_ATTR_UNUSED *params)
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -17251,15 +17121,15 @@ error:
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 
 /*
  * A test to check that a link's name can be correctly
  * retrieved by using H5Lget_name_by_idx.
  */
-static void
-test_get_link_name(void H5_ATTR_UNUSED *params)
+static int
+test_get_link_name(void)
 {
     ssize_t link_name_buf_size = 0;
     htri_t  link_exists;
@@ -17268,7 +17138,7 @@ test_get_link_name(void H5_ATTR_UNUSED *params)
     hid_t   subgroup_id = H5I_INVALID_HID;
     hid_t   gcpl_id     = H5I_INVALID_HID;
     char    link_name_buf[GET_LINK_NAME_TEST_BUF_SIZE];
-    char    ext_link_filename[H5_API_TEST_FILENAME_MAX_LENGTH] = {0};
+    char    ext_link_filename[H5_API_TEST_FILENAME_MAX_LENGTH];
 
     TESTING_MULTIPART("link name retrieval");
 
@@ -17280,7 +17150,7 @@ test_get_link_name(void H5_ATTR_UNUSED *params)
         SKIPPED();
         printf("    API functions for basic file, group, link, soft link, hard link, or external link "
                "aren't supported with this connector\n");
-        return;
+        return 0;
     }
 
     TESTING_2("test setup");
@@ -18818,12 +18688,6 @@ test_get_link_name(void H5_ATTR_UNUSED *params)
                 PART_ERROR(H5Lget_name_by_idx_external_crt_order_increasing);
             }
 
-            if (remove_test_file(NULL, ext_link_filename) < 0) {
-                H5_FAILED();
-                printf("    failed to delete external file '%s'\n", ext_link_filename);
-                PART_ERROR(H5Lget_name_by_idx_external_crt_order_increasing);
-            }
-
             PASSED();
         }
         PART_END(H5Lget_name_by_idx_external_crt_order_increasing);
@@ -19013,12 +18877,6 @@ test_get_link_name(void H5_ATTR_UNUSED *params)
                 PART_ERROR(H5Lget_name_by_idx_external_crt_order_decreasing);
             }
 
-            if (remove_test_file(NULL, ext_link_filename) < 0) {
-                H5_FAILED();
-                printf("    failed to delete external file '%s'\n", ext_link_filename);
-                PART_ERROR(H5Lget_name_by_idx_external_crt_order_decreasing);
-            }
-
             PASSED();
         }
         PART_END(H5Lget_name_by_idx_external_crt_order_decreasing);
@@ -19199,12 +19057,6 @@ test_get_link_name(void H5_ATTR_UNUSED *params)
             if (H5Gclose(subgroup_id) < 0) {
                 H5_FAILED();
                 printf("    failed to close group\n");
-                PART_ERROR(H5Lget_name_by_idx_external_name_order_increasing);
-            }
-
-            if (remove_test_file(NULL, ext_link_filename) < 0) {
-                H5_FAILED();
-                printf("    failed to delete external file '%s'\n", ext_link_filename);
                 PART_ERROR(H5Lget_name_by_idx_external_name_order_increasing);
             }
 
@@ -19391,12 +19243,6 @@ test_get_link_name(void H5_ATTR_UNUSED *params)
                 PART_ERROR(H5Lget_name_by_idx_external_name_order_decreasing);
             }
 
-            if (remove_test_file(NULL, ext_link_filename) < 0) {
-                H5_FAILED();
-                printf("    failed to delete external file '%s'\n", ext_link_filename);
-                PART_ERROR(H5Lget_name_by_idx_external_name_order_decreasing);
-            }
-
             PASSED();
         }
         PART_END(H5Lget_name_by_idx_external_name_order_decreasing);
@@ -19497,7 +19343,7 @@ test_get_link_name(void H5_ATTR_UNUSED *params)
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -19508,19 +19354,18 @@ error:
         H5Gclose(container_group);
         H5Fclose(ext_file_id);
         H5Fclose(file_id);
-        remove_test_file(NULL, ext_link_filename);
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 
 /*
  * A test to check that a link's name can't be retrieved
  * when H5Lget_name_by_idx is passed invalid parameters.
  */
-static void
-test_get_link_name_invalid_params(void H5_ATTR_UNUSED *params)
+static int
+test_get_link_name_invalid_params(void)
 {
     ssize_t ret;
     htri_t  link_exists;
@@ -19540,7 +19385,7 @@ test_get_link_name_invalid_params(void H5_ATTR_UNUSED *params)
         SKIPPED();
         printf("    API functions for basic file, group, link, soft link, hard link, or external link "
                "aren't supported with this connector\n");
-        return;
+        return 0;
     }
 
     TESTING_2("test setup");
@@ -19762,7 +19607,7 @@ test_get_link_name_invalid_params(void H5_ATTR_UNUSED *params)
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -19775,7 +19620,7 @@ error:
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 
 /*
@@ -19785,8 +19630,8 @@ error:
  * increasing and decreasing order of both link
  * name and link creation order.
  */
-static void
-test_link_iterate_hard_links(void H5_ATTR_UNUSED *params)
+static int
+test_link_iterate_hard_links(void)
 {
     size_t i;
     htri_t link_exists;
@@ -19806,7 +19651,7 @@ test_link_iterate_hard_links(void H5_ATTR_UNUSED *params)
         SKIPPED();
         printf("    API functions for basic file, group, dataset, link, or iterate aren't "
                "supported with this connector\n");
-        return;
+        return 0;
     }
 
     TESTING_2("test setup");
@@ -20141,7 +19986,7 @@ test_link_iterate_hard_links(void H5_ATTR_UNUSED *params)
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -20156,7 +20001,7 @@ error:
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 
 /*
@@ -20166,8 +20011,8 @@ error:
  * increasing and decreasing order of both link
  * name and link creation order.
  */
-static void
-test_link_iterate_soft_links(void H5_ATTR_UNUSED *params)
+static int
+test_link_iterate_soft_links(void)
 {
     size_t i;
     htri_t link_exists;
@@ -20184,7 +20029,7 @@ test_link_iterate_soft_links(void H5_ATTR_UNUSED *params)
         SKIPPED();
         printf("    API functions for basic file, group, link, soft link, or iterate "
                "aren't supported with this connector\n");
-        return;
+        return 0;
     }
 
     TESTING_2("test setup");
@@ -20497,7 +20342,7 @@ test_link_iterate_soft_links(void H5_ATTR_UNUSED *params)
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -20509,7 +20354,7 @@ error:
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 
 /*
@@ -20519,15 +20364,15 @@ error:
  * increasing and decreasing order of both link
  * name and link creation order.
  */
-static void
-test_link_iterate_external_links(void H5_ATTR_UNUSED *params)
+static int
+test_link_iterate_external_links(void)
 {
     size_t i;
     htri_t link_exists;
     hid_t  file_id         = H5I_INVALID_HID;
     hid_t  container_group = H5I_INVALID_HID, group_id = H5I_INVALID_HID;
-    hid_t  gcpl_id                                            = H5I_INVALID_HID;
-    char   ext_link_filename[H5_API_TEST_FILENAME_MAX_LENGTH] = {0};
+    hid_t  gcpl_id = H5I_INVALID_HID;
+    char   ext_link_filename[H5_API_TEST_FILENAME_MAX_LENGTH];
 
     TESTING_MULTIPART("link iteration (only external links)");
 
@@ -20538,7 +20383,7 @@ test_link_iterate_external_links(void H5_ATTR_UNUSED *params)
         SKIPPED();
         printf("    API functions for basic file, group, link, external link, or iterate "
                "aren't supported with this connector\n");
-        return;
+        return 0;
     }
 
     TESTING_2("test setup");
@@ -20893,12 +20738,10 @@ test_link_iterate_external_links(void H5_ATTR_UNUSED *params)
         TEST_ERROR;
     if (H5Fclose(file_id) < 0)
         TEST_ERROR;
-    if (remove_test_file(NULL, ext_link_filename) < 0)
-        TEST_ERROR;
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -20907,11 +20750,10 @@ error:
         H5Gclose(group_id);
         H5Gclose(container_group);
         H5Fclose(file_id);
-        remove_test_file(NULL, ext_link_filename);
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 
 /*
@@ -20924,14 +20766,14 @@ error:
  * TODO refactor test so that creation order tests
  * actually test the order that objects were created in.
  */
-static void
-test_link_iterate_ud_links(void H5_ATTR_UNUSED *params)
+static int
+test_link_iterate_ud_links(void)
 {
     TESTING("link iteration (only user-defined links)");
 
     SKIPPED();
 
-    return;
+    return 1;
 }
 
 /*
@@ -20948,8 +20790,8 @@ test_link_iterate_ud_links(void H5_ATTR_UNUSED *params)
  *
  * TODO refactor link saving portion into its own test
  */
-static void
-test_link_iterate_mixed_links(void H5_ATTR_UNUSED *params)
+static int
+test_link_iterate_mixed_links(void)
 {
     hsize_t saved_idx;
     size_t  i;
@@ -20961,7 +20803,7 @@ test_link_iterate_mixed_links(void H5_ATTR_UNUSED *params)
     hid_t   dset_dtype  = H5I_INVALID_HID;
     hid_t   dset_dspace = H5I_INVALID_HID;
     int     halted;
-    char    ext_link_filename[H5_API_TEST_FILENAME_MAX_LENGTH] = {0};
+    char    ext_link_filename[H5_API_TEST_FILENAME_MAX_LENGTH];
 
     TESTING_MULTIPART("link iteration (mixed link types)");
 
@@ -20972,7 +20814,7 @@ test_link_iterate_mixed_links(void H5_ATTR_UNUSED *params)
         SKIPPED();
         printf("    API functions for basic file, group, link, soft link, external link, or iterate "
                "aren't supported with this connector\n");
-        return;
+        return 0;
     }
 
     TESTING_2("test setup");
@@ -21458,12 +21300,10 @@ test_link_iterate_mixed_links(void H5_ATTR_UNUSED *params)
         TEST_ERROR;
     if (H5Fclose(file_id) < 0)
         TEST_ERROR;
-    if (remove_test_file(NULL, ext_link_filename) < 0)
-        TEST_ERROR;
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -21475,30 +21315,29 @@ error:
         H5Gclose(group_id);
         H5Gclose(container_group);
         H5Fclose(file_id);
-        remove_test_file(NULL, ext_link_filename);
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 
 /*
  * A test to check that H5Literate(_by_name)2 fails
  * when given invalid parameters.
  */
-static void
-test_link_iterate_invalid_params(void H5_ATTR_UNUSED *params)
+static int
+test_link_iterate_invalid_params(void)
 {
     herr_t err_ret = -1;
     size_t i;
     htri_t link_exists;
-    hid_t  file_id                                            = H5I_INVALID_HID;
-    hid_t  container_group                                    = H5I_INVALID_HID;
-    hid_t  group_id                                           = H5I_INVALID_HID;
-    hid_t  dset_id                                            = H5I_INVALID_HID;
-    hid_t  dset_dtype                                         = H5I_INVALID_HID;
-    hid_t  dset_dspace                                        = H5I_INVALID_HID;
-    char   ext_link_filename[H5_API_TEST_FILENAME_MAX_LENGTH] = {0};
+    hid_t  file_id         = H5I_INVALID_HID;
+    hid_t  container_group = H5I_INVALID_HID;
+    hid_t  group_id        = H5I_INVALID_HID;
+    hid_t  dset_id         = H5I_INVALID_HID;
+    hid_t  dset_dtype      = H5I_INVALID_HID;
+    hid_t  dset_dspace     = H5I_INVALID_HID;
+    char   ext_link_filename[H5_API_TEST_FILENAME_MAX_LENGTH];
 
     TESTING_MULTIPART("link iteration with invalid parameters");
 
@@ -21510,7 +21349,7 @@ test_link_iterate_invalid_params(void H5_ATTR_UNUSED *params)
         SKIPPED();
         printf("    API functions for basic file, group, dataset, link, soft link, external link, or iterate "
                "aren't supported with this connector\n");
-        return;
+        return 0;
     }
 
     TESTING_2("test setup");
@@ -21872,12 +21711,10 @@ test_link_iterate_invalid_params(void H5_ATTR_UNUSED *params)
         TEST_ERROR;
     if (H5Fclose(file_id) < 0)
         TEST_ERROR;
-    if (remove_test_file(NULL, ext_link_filename) < 0)
-        TEST_ERROR;
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -21888,19 +21725,18 @@ error:
         H5Gclose(group_id);
         H5Gclose(container_group);
         H5Fclose(file_id);
-        remove_test_file(NULL, ext_link_filename);
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 
 /*
  * A test to check that link iteration performed on a
  * group with no links in it is not problematic.
  */
-static void
-test_link_iterate_0_links(void H5_ATTR_UNUSED *params)
+static int
+test_link_iterate_0_links(void)
 {
     hid_t file_id         = H5I_INVALID_HID;
     hid_t container_group = H5I_INVALID_HID, group_id = H5I_INVALID_HID;
@@ -21914,7 +21750,7 @@ test_link_iterate_0_links(void H5_ATTR_UNUSED *params)
         SKIPPED();
         printf("    API functions for basic file, group, or iterate aren't supported "
                "with this connector\n");
-        return;
+        return 0;
     }
 
     TESTING_2("test setup");
@@ -22118,7 +21954,7 @@ test_link_iterate_0_links(void H5_ATTR_UNUSED *params)
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -22130,7 +21966,7 @@ error:
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 
 /*
@@ -22141,8 +21977,8 @@ error:
  * decreasing order of both link name and link
  * creation order.
  */
-static void
-test_link_visit_hard_links_no_cycles(void H5_ATTR_UNUSED *params)
+static int
+test_link_visit_hard_links_no_cycles(void)
 {
     size_t i;
     htri_t link_exists;
@@ -22162,7 +21998,7 @@ test_link_visit_hard_links_no_cycles(void H5_ATTR_UNUSED *params)
         SKIPPED();
         printf("    API functions for basic file, group, dataset, or link iterate aren't "
                "supported with this connector\n");
-        return;
+        return 0;
     }
 
     TESTING_2("test setup");
@@ -22514,7 +22350,7 @@ test_link_visit_hard_links_no_cycles(void H5_ATTR_UNUSED *params)
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -22530,7 +22366,7 @@ error:
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 
 /*
@@ -22541,8 +22377,8 @@ error:
  * decreasing order of both link name and link
  * creation order.
  */
-static void
-test_link_visit_soft_links_no_cycles(void H5_ATTR_UNUSED *params)
+static int
+test_link_visit_soft_links_no_cycles(void)
 {
     size_t i;
     htri_t link_exists;
@@ -22560,7 +22396,7 @@ test_link_visit_soft_links_no_cycles(void H5_ATTR_UNUSED *params)
         SKIPPED();
         printf("    API functions for basic file, group, link, soft link, or iterate "
                "aren't supported with this connector\n");
-        return;
+        return 0;
     }
 
     TESTING_2("test setup");
@@ -22897,7 +22733,7 @@ test_link_visit_soft_links_no_cycles(void H5_ATTR_UNUSED *params)
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -22910,7 +22746,7 @@ error:
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 
 /*
@@ -22921,16 +22757,16 @@ error:
  * decreasing order of both link name and link
  * creation order.
  */
-static void
-test_link_visit_external_links_no_cycles(void H5_ATTR_UNUSED *params)
+static int
+test_link_visit_external_links_no_cycles(void)
 {
     size_t i;
     htri_t link_exists;
     hid_t  file_id         = H5I_INVALID_HID;
     hid_t  container_group = H5I_INVALID_HID, group_id = H5I_INVALID_HID;
-    hid_t  subgroup_id                                        = H5I_INVALID_HID;
-    hid_t  gcpl_id                                            = H5I_INVALID_HID;
-    char   ext_link_filename[H5_API_TEST_FILENAME_MAX_LENGTH] = {0};
+    hid_t  subgroup_id = H5I_INVALID_HID;
+    hid_t  gcpl_id     = H5I_INVALID_HID;
+    char   ext_link_filename[H5_API_TEST_FILENAME_MAX_LENGTH];
 
     TESTING_MULTIPART("link visiting without cycles (only external links)");
 
@@ -22941,7 +22777,7 @@ test_link_visit_external_links_no_cycles(void H5_ATTR_UNUSED *params)
         SKIPPED();
         printf("    API functions for basic file, group, link, external link, or iterate "
                "aren't supported with this connector\n");
-        return;
+        return 0;
     }
 
     TESTING_2("test setup");
@@ -23289,12 +23125,10 @@ test_link_visit_external_links_no_cycles(void H5_ATTR_UNUSED *params)
         TEST_ERROR;
     if (H5Fclose(file_id) < 0)
         TEST_ERROR;
-    if (remove_test_file(NULL, ext_link_filename) < 0)
-        TEST_ERROR;
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -23304,11 +23138,10 @@ error:
         H5Gclose(group_id);
         H5Gclose(container_group);
         H5Fclose(file_id);
-        remove_test_file(NULL, ext_link_filename);
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 
 /*
@@ -23322,14 +23155,14 @@ error:
  * TODO refactor test so that creation order tests
  * actually test the order that objects were created in.
  */
-static void
-test_link_visit_ud_links_no_cycles(void H5_ATTR_UNUSED *params)
+static int
+test_link_visit_ud_links_no_cycles(void)
 {
     TESTING("link visiting without cycles (only user-defined links)");
 
     SKIPPED();
 
-    return;
+    return 1;
 }
 
 /*
@@ -23347,19 +23180,19 @@ test_link_visit_ud_links_no_cycles(void H5_ATTR_UNUSED *params)
  *
  * TODO refactor test to create a macroed number of subgroups
  */
-static void
-test_link_visit_mixed_links_no_cycles(void H5_ATTR_UNUSED *params)
+static int
+test_link_visit_mixed_links_no_cycles(void)
 {
     size_t i;
     htri_t link_exists;
     hid_t  file_id         = H5I_INVALID_HID;
     hid_t  container_group = H5I_INVALID_HID, group_id = H5I_INVALID_HID;
     hid_t  subgroup1 = H5I_INVALID_HID, subgroup2 = H5I_INVALID_HID;
-    hid_t  gcpl_id                                            = H5I_INVALID_HID;
-    hid_t  dset_id                                            = H5I_INVALID_HID;
-    hid_t  dset_dtype                                         = H5I_INVALID_HID;
-    hid_t  fspace_id                                          = H5I_INVALID_HID;
-    char   ext_link_filename[H5_API_TEST_FILENAME_MAX_LENGTH] = {0};
+    hid_t  gcpl_id    = H5I_INVALID_HID;
+    hid_t  dset_id    = H5I_INVALID_HID;
+    hid_t  dset_dtype = H5I_INVALID_HID;
+    hid_t  fspace_id  = H5I_INVALID_HID;
+    char   ext_link_filename[H5_API_TEST_FILENAME_MAX_LENGTH];
 
     TESTING_MULTIPART("link visiting without cycles (mixed link types)");
 
@@ -23373,7 +23206,7 @@ test_link_visit_mixed_links_no_cycles(void H5_ATTR_UNUSED *params)
         printf(
             "    API functions for basic file, group, link, hard link, soft link, external link, or iterate "
             "aren't supported with this connector\n");
-        return;
+        return 0;
     }
 
     TESTING_2("test setup");
@@ -23802,12 +23635,10 @@ test_link_visit_mixed_links_no_cycles(void H5_ATTR_UNUSED *params)
         TEST_ERROR;
     if (H5Fclose(file_id) < 0)
         TEST_ERROR;
-    if (remove_test_file(NULL, ext_link_filename) < 0)
-        TEST_ERROR;
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -23821,11 +23652,10 @@ error:
         H5Gclose(group_id);
         H5Gclose(container_group);
         H5Fclose(file_id);
-        remove_test_file(NULL, ext_link_filename);
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 
 /*
@@ -23835,8 +23665,8 @@ error:
  * Iteration is done in increasing and decreasing
  * order of both link name and link creation order.
  */
-static void
-test_link_visit_hard_links_cycles(void H5_ATTR_UNUSED *params)
+static int
+test_link_visit_hard_links_cycles(void)
 {
     size_t i;
     htri_t link_exists;
@@ -23854,7 +23684,7 @@ test_link_visit_hard_links_cycles(void H5_ATTR_UNUSED *params)
         SKIPPED();
         printf("    API functions for basic file, group, link, hard link, or iterate "
                "aren't supported with this connector\n");
-        return;
+        return 0;
     }
 
     TESTING_2("test setup");
@@ -24185,7 +24015,7 @@ test_link_visit_hard_links_cycles(void H5_ATTR_UNUSED *params)
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -24198,7 +24028,7 @@ error:
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 
 /*
@@ -24208,8 +24038,8 @@ error:
  * Iteration is done in increasing and decreasing
  * order of both link name and link creation order.
  */
-static void
-test_link_visit_soft_links_cycles(void H5_ATTR_UNUSED *params)
+static int
+test_link_visit_soft_links_cycles(void)
 {
     size_t i;
     htri_t link_exists;
@@ -24227,7 +24057,7 @@ test_link_visit_soft_links_cycles(void H5_ATTR_UNUSED *params)
         SKIPPED();
         printf("    API functions for basic file, group, link, soft link, or iterate "
                "aren't supported with this connector\n");
-        return;
+        return 0;
     }
 
     TESTING_2("test setup");
@@ -24564,7 +24394,7 @@ test_link_visit_soft_links_cycles(void H5_ATTR_UNUSED *params)
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -24577,7 +24407,7 @@ error:
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 
 /*
@@ -24588,8 +24418,8 @@ error:
  * decreasing order of both link name and link
  * creation order.
  */
-static void
-test_link_visit_external_links_cycles(void H5_ATTR_UNUSED *params)
+static int
+test_link_visit_external_links_cycles(void)
 {
     size_t i;
     htri_t link_exists;
@@ -24607,7 +24437,7 @@ test_link_visit_external_links_cycles(void H5_ATTR_UNUSED *params)
         SKIPPED();
         printf("    API functions for basic file, group, link, external link, or iterate "
                "aren't supported with this connector\n");
-        return;
+        return 0;
     }
 
     TESTING_2("test setup");
@@ -24949,7 +24779,7 @@ test_link_visit_external_links_cycles(void H5_ATTR_UNUSED *params)
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -24962,7 +24792,7 @@ error:
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 
 /*
@@ -24976,14 +24806,14 @@ error:
  * TODO refactor test so that creation order tests
  * actually test the order that objects were created in.
  */
-static void
-test_link_visit_ud_links_cycles(void H5_ATTR_UNUSED *params)
+static int
+test_link_visit_ud_links_cycles(void)
 {
     TESTING("link visiting with cycles (only user-defined links)");
 
     SKIPPED();
 
-    return;
+    return 1;
 }
 
 /*
@@ -24996,16 +24826,16 @@ test_link_visit_ud_links_cycles(void H5_ATTR_UNUSED *params)
  * TODO refactor test so that creation order tests
  * actually test the order that objects were created in.
  */
-static void
-test_link_visit_mixed_links_cycles(void H5_ATTR_UNUSED *params)
+static int
+test_link_visit_mixed_links_cycles(void)
 {
     htri_t link_exists;
     size_t i;
     hid_t  file_id         = H5I_INVALID_HID;
     hid_t  container_group = H5I_INVALID_HID, group_id = H5I_INVALID_HID;
     hid_t  subgroup1 = H5I_INVALID_HID, subgroup2 = H5I_INVALID_HID;
-    hid_t  gcpl_id                                            = H5I_INVALID_HID;
-    char   ext_link_filename[H5_API_TEST_FILENAME_MAX_LENGTH] = {0};
+    hid_t  gcpl_id = H5I_INVALID_HID;
+    char   ext_link_filename[H5_API_TEST_FILENAME_MAX_LENGTH];
 
     TESTING_MULTIPART("link visiting with cycles (mixed link types)");
 
@@ -25017,7 +24847,7 @@ test_link_visit_mixed_links_cycles(void H5_ATTR_UNUSED *params)
         SKIPPED();
         printf("    API functions for basic file, group, link, hard link, soft link, external link, iterate, "
                "or user defined link aren't supported with this connector\n");
-        return;
+        return 0;
     }
 
     TESTING_2("test setup");
@@ -25409,12 +25239,10 @@ test_link_visit_mixed_links_cycles(void H5_ATTR_UNUSED *params)
         TEST_ERROR;
     if (H5Fclose(file_id) < 0)
         TEST_ERROR;
-    if (remove_test_file(NULL, ext_link_filename) < 0)
-        TEST_ERROR;
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -25425,29 +25253,28 @@ error:
         H5Gclose(group_id);
         H5Gclose(container_group);
         H5Fclose(file_id);
-        remove_test_file(NULL, ext_link_filename);
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 
 /*
  * A test to check that H5Lvisit(_by_name)2 fails when
  * it is given invalid parameters.
  */
-static void
-test_link_visit_invalid_params(void H5_ATTR_UNUSED *params)
+static int
+test_link_visit_invalid_params(void)
 {
     herr_t err_ret = -1;
     htri_t link_exists;
     hid_t  file_id         = H5I_INVALID_HID;
     hid_t  container_group = H5I_INVALID_HID, group_id = H5I_INVALID_HID;
     hid_t  subgroup1 = H5I_INVALID_HID, subgroup2 = H5I_INVALID_HID;
-    hid_t  dset_id                                            = H5I_INVALID_HID;
-    hid_t  dset_dtype                                         = H5I_INVALID_HID;
-    hid_t  fspace_id                                          = H5I_INVALID_HID;
-    char   ext_link_filename[H5_API_TEST_FILENAME_MAX_LENGTH] = {0};
+    hid_t  dset_id    = H5I_INVALID_HID;
+    hid_t  dset_dtype = H5I_INVALID_HID;
+    hid_t  fspace_id  = H5I_INVALID_HID;
+    char   ext_link_filename[H5_API_TEST_FILENAME_MAX_LENGTH];
 
     TESTING_MULTIPART("link visiting with invalid parameters");
 
@@ -25458,7 +25285,7 @@ test_link_visit_invalid_params(void H5_ATTR_UNUSED *params)
         SKIPPED();
         printf("    API functions for basic file, group, dataset, link, external link, or iterate "
                "aren't supported with this connector\n");
-        return;
+        return 0;
     }
 
     TESTING_2("test setup");
@@ -25872,12 +25699,10 @@ test_link_visit_invalid_params(void H5_ATTR_UNUSED *params)
         TEST_ERROR;
     if (H5Fclose(file_id) < 0)
         TEST_ERROR;
-    if (remove_test_file(NULL, ext_link_filename) < 0)
-        TEST_ERROR;
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -25890,11 +25715,10 @@ error:
         H5Gclose(group_id);
         H5Gclose(container_group);
         H5Fclose(file_id);
-        remove_test_file(NULL, ext_link_filename);
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 
 /*
@@ -25902,8 +25726,8 @@ error:
  * performed on a group with no links in it is
  * not problematic.
  */
-static void
-test_link_visit_0_links(void H5_ATTR_UNUSED *params)
+static int
+test_link_visit_0_links(void)
 {
     hid_t file_id         = H5I_INVALID_HID;
     hid_t container_group = H5I_INVALID_HID, group_id = H5I_INVALID_HID;
@@ -25917,7 +25741,7 @@ test_link_visit_0_links(void H5_ATTR_UNUSED *params)
         SKIPPED();
         printf("    API functions for basic file, group, or link iterate aren't supported "
                "with this connector\n");
-        return;
+        return 0;
     }
 
     TESTING_2("test setup");
@@ -26116,7 +25940,7 @@ test_link_visit_0_links(void H5_ATTR_UNUSED *params)
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -26128,7 +25952,7 @@ error:
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 
 /*
@@ -27440,116 +27264,36 @@ link_visit_0_links_cb(hid_t group_id, const char *name, const H5L_info2_t *info,
     return 0;
 }
 
-void
-H5_api_link_test_add(void)
+/*
+ * Cleanup temporary test files
+ */
+static void
+cleanup_files(void)
 {
-    /* Add a fake test to print out a header to distinguish different test interfaces */
-    AddTest("print_link_test_header", print_link_test_header, NULL, NULL, NULL, 0,
-            "Prints header for link tests");
+    remove_test_file(test_path_prefix, EXTERNAL_LINK_TEST_FILE_NAME);
+    remove_test_file(test_path_prefix, EXTERNAL_LINK_INVALID_PARAMS_TEST_FILE_NAME);
+}
 
-    AddTest("test_create_hard_link", test_create_hard_link, NULL, NULL, NULL, 0, "hard link creation");
-    AddTest("test_create_hard_link_long_name", test_create_hard_link_long_name, NULL, NULL, NULL, 0,
-            "hard link creation with a long name");
-    AddTest("test_create_hard_link_many", test_create_hard_link_many, NULL, NULL, NULL, 0,
-            "hard link creation of many links");
-    AddTest("test_create_hard_link_same_loc", test_create_hard_link_same_loc, NULL, NULL, NULL, 0,
-            "hard link creation with H5L_SAME_LOC");
-    AddTest("test_create_hard_link_invalid_params", test_create_hard_link_invalid_params, NULL, NULL, NULL, 0,
-            "hard link creation with invalid parameters");
-    AddTest("test_create_soft_link_existing_relative", test_create_soft_link_existing_relative, NULL, NULL,
-            NULL, 0, "soft link creation to existing object by relative path");
-    AddTest("test_create_soft_link_existing_absolute", test_create_soft_link_existing_absolute, NULL, NULL,
-            NULL, 0, "soft link creation to existing object by absolute path");
-    AddTest("test_create_soft_link_dangling_relative", test_create_soft_link_dangling_relative, NULL, NULL,
-            NULL, 0, "dangling soft link creation to object by relative path");
-    AddTest("test_create_soft_link_dangling_absolute", test_create_soft_link_dangling_absolute, NULL, NULL,
-            NULL, 0, "dangling soft link creation to object by absolute path");
-    AddTest("test_create_soft_link_long_name", test_create_soft_link_long_name, NULL, NULL, NULL, 0,
-            "soft link creation with a long name");
-    AddTest("test_create_soft_link_many", test_create_soft_link_many, NULL, NULL, NULL, 0,
-            "soft link creation of many links");
-    AddTest("test_create_soft_link_invalid_params", test_create_soft_link_invalid_params, NULL, NULL, NULL, 0,
-            "soft link creation with invalid parameters");
-    AddTest("test_create_external_link", test_create_external_link, NULL, NULL, NULL, 0,
-            "external link creation to existing object");
-    AddTest("test_create_external_link_dangling", test_create_external_link_dangling, NULL, NULL, NULL, 0,
-            "dangling external link creation");
-    AddTest("test_create_external_link_multi", test_create_external_link_multi, NULL, NULL, NULL, 0,
-            "external link creation to an object across several files");
-    AddTest("test_create_external_link_ping_pong", test_create_external_link_ping_pong, NULL, NULL, NULL, 0,
-            "external link creation to an object in ping pong style");
-    AddTest("test_create_external_link_invalid_params", test_create_external_link_invalid_params, NULL, NULL,
-            NULL, 0, "H5Lcreate_external with invalid parameters");
-    AddTest("test_create_user_defined_link", test_create_user_defined_link, NULL, NULL, NULL, 0,
-            "user-defined link creation");
-    AddTest("test_create_user_defined_link_invalid_params", test_create_user_defined_link_invalid_params,
-            NULL, NULL, NULL, 0, "H5Lcreate_ud with invalid parameters");
-    AddTest("test_delete_link", test_delete_link, NULL, NULL, NULL, 0, "link deletion");
-    AddTest("test_delete_link_reset_grp_max_crt_order", test_delete_link_reset_grp_max_crt_order, NULL, NULL,
-            NULL, 0, "H5Ldelete of all links in group resets group's maximum link creation order value");
-    AddTest("test_delete_link_invalid_params", test_delete_link_invalid_params, NULL, NULL, NULL, 0,
-            "H5Ldelete with invalid parameters");
-    AddTest("test_copy_link", test_copy_link, NULL, NULL, NULL, 0, "link copying");
-    AddTest("test_copy_links_into_group_with_links", test_copy_links_into_group_with_links, NULL, NULL, NULL,
-            0, "H5Lcopy adjusting creation order values for copied links");
-    AddTest("test_copy_link_across_files", test_copy_link_across_files, NULL, NULL, NULL, 0,
-            "link copying across files");
-    AddTest("test_copy_link_invalid_params", test_copy_link_invalid_params, NULL, NULL, NULL, 0,
-            "H5Lcopy with invalid parameters");
-    AddTest("test_move_link", test_move_link, NULL, NULL, NULL, 0, "link moving");
-    AddTest("test_move_links_into_group_with_links", test_move_links_into_group_with_links, NULL, NULL, NULL,
-            0, "H5Lmove adjusting creation order values for moved links");
-    AddTest("test_move_link_across_files", test_move_link_across_files, NULL, NULL, NULL, 0,
-            "link moving across files");
-    AddTest("test_move_link_reset_grp_max_crt_order", test_move_link_reset_grp_max_crt_order, NULL, NULL,
-            NULL, 0, "H5Lmove of all links out of group resets group's maximum link creation order value");
-    AddTest("test_move_link_invalid_params", test_move_link_invalid_params, NULL, NULL, NULL, 0,
-            "H5Lmove with invalid parameters");
-    AddTest("test_get_link_val", test_get_link_val, NULL, NULL, NULL, 0, "link value retrieval");
-    AddTest("test_get_link_val_invalid_params", test_get_link_val_invalid_params, NULL, NULL, NULL, 0,
-            "link value retrieval with invalid parameters");
-    AddTest("test_get_link_info", test_get_link_info, NULL, NULL, NULL, 0, "link info retrieval");
-    AddTest("test_get_link_info_invalid_params", test_get_link_info_invalid_params, NULL, NULL, NULL, 0,
-            "link info retrieval with invalid parameters");
-    AddTest("test_get_link_name", test_get_link_name, NULL, NULL, NULL, 0, "link name retrieval");
-    AddTest("test_get_link_name_invalid_params", test_get_link_name_invalid_params, NULL, NULL, NULL, 0,
-            "link name retrieval with invalid parameters");
-    AddTest("test_link_iterate_hard_links", test_link_iterate_hard_links, NULL, NULL, NULL, 0,
-            "link iteration (only hard links)");
-    AddTest("test_link_iterate_soft_links", test_link_iterate_soft_links, NULL, NULL, NULL, 0,
-            "link iteration (only soft links)");
-    AddTest("test_link_iterate_external_links", test_link_iterate_external_links, NULL, NULL, NULL, 0,
-            "link iteration (only external links)");
-    AddTest("test_link_iterate_ud_links", test_link_iterate_ud_links, NULL, NULL, NULL, 0,
-            "link iteration (only user-defined links)");
-    AddTest("test_link_iterate_mixed_links", test_link_iterate_mixed_links, NULL, NULL, NULL, 0,
-            "link iteration (mixed link types)");
-    AddTest("test_link_iterate_invalid_params", test_link_iterate_invalid_params, NULL, NULL, NULL, 0,
-            "link iteration with invalid parameters");
-    AddTest("test_link_iterate_0_links", test_link_iterate_0_links, NULL, NULL, NULL, 0,
-            "link iteration on group with 0 links");
-    AddTest("test_link_visit_hard_links_no_cycles", test_link_visit_hard_links_no_cycles, NULL, NULL, NULL, 0,
-            "link visiting without cycles (only hard links)");
-    AddTest("test_link_visit_soft_links_no_cycles", test_link_visit_soft_links_no_cycles, NULL, NULL, NULL, 0,
-            "link visiting without cycles (only soft links)");
-    AddTest("test_link_visit_external_links_no_cycles", test_link_visit_external_links_no_cycles, NULL, NULL,
-            NULL, 0, "link visiting without cycles (only external links)");
-    AddTest("test_link_visit_ud_links_no_cycles", test_link_visit_ud_links_no_cycles, NULL, NULL, NULL, 0,
-            "link visiting without cycles (only user-defined links)");
-    AddTest("test_link_visit_mixed_links_no_cycles", test_link_visit_mixed_links_no_cycles, NULL, NULL, NULL,
-            0, "link visiting without cycles (mixed link types)");
-    AddTest("test_link_visit_hard_links_cycles", test_link_visit_hard_links_cycles, NULL, NULL, NULL, 0,
-            "link visiting with cycles (only hard links)");
-    AddTest("test_link_visit_soft_links_cycles", test_link_visit_soft_links_cycles, NULL, NULL, NULL, 0,
-            "link visiting with cycles (only soft links)");
-    AddTest("test_link_visit_external_links_cycles", test_link_visit_external_links_cycles, NULL, NULL, NULL,
-            0, "link visiting with cycles (only external links)");
-    AddTest("test_link_visit_ud_links_cycles", test_link_visit_ud_links_cycles, NULL, NULL, NULL, 0,
-            "link visiting with cycles (only user-defined links)");
-    AddTest("test_link_visit_mixed_links_cycles", test_link_visit_mixed_links_cycles, NULL, NULL, NULL, 0,
-            "link visiting with cycles (mixed link types)");
-    AddTest("test_link_visit_invalid_params", test_link_visit_invalid_params, NULL, NULL, NULL, 0,
-            "link visiting with invalid parameters");
-    AddTest("test_link_visit_0_links", test_link_visit_0_links, NULL, NULL, NULL, 0,
-            "link visiting on group with subgroups containing 0 links");
+int
+H5_api_link_test(void)
+{
+    size_t i;
+    int    nerrors;
+
+    printf("**********************************************\n");
+    printf("*                                            *\n");
+    printf("*              API Link Tests                *\n");
+    printf("*                                            *\n");
+    printf("**********************************************\n\n");
+
+    for (i = 0, nerrors = 0; i < ARRAY_LENGTH(link_tests); i++) {
+        nerrors += (*link_tests[i])() ? 1 : 0;
+    }
+
+    printf("\n");
+
+    printf("Cleaning up testing files\n");
+    cleanup_files();
+
+    return nerrors;
 }

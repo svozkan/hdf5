@@ -4,7 +4,7 @@
  *                                                                           *
  * This file is part of HDF5.  The full HDF5 copyright notice, including     *
  * terms governing use, modification, and redistribution, is contained in    *
- * the LICENSE file, which can be found at the root of the source code       *
+ * the COPYING file, which can be found at the root of the source code       *
  * distribution tree, or in https://www.hdfgroup.org/licenses.               *
  * If you do not have access to either file, you may request a copy from     *
  * help@hdfgroup.org.                                                        *
@@ -1449,14 +1449,8 @@ H5S_select_iterate(void *buf, const H5T_t *type, H5S_t *space, const H5S_sel_ite
                 /* Check which type of callback to make */
                 switch (op->op_type) {
                     case H5S_SEL_ITER_OP_APP:
-                        /* Prepare & restore library for user callback */
-                        H5_BEFORE_USER_CB(H5_ITER_ERROR)
-                            {
-                                /* Make the application callback */
-                                user_ret =
-                                    (op->u.app_op.op)(loc, op->u.app_op.type_id, ndims, coords, op_data);
-                            }
-                        H5_AFTER_USER_CB(H5_ITER_ERROR)
+                        /* Make the application callback */
+                        user_ret = (op->u.app_op.op)(loc, op->u.app_op.type_id, ndims, coords, op_data);
                         break;
 
                     case H5S_SEL_ITER_OP_LIB:
@@ -2661,39 +2655,39 @@ H5Sselect_project_intersection(hid_t src_space_id, hid_t dst_space_id, hid_t src
     H5S_t *proj_space = NULL;                           /* Output dataspace */
     hid_t  ret_value;                                   /* Return value */
 
-    FUNC_ENTER_API(H5I_INVALID_HID)
+    FUNC_ENTER_API(FAIL)
 
     /* Check args */
     if (NULL == (src_space = (H5S_t *)H5I_object_verify(src_space_id, H5I_DATASPACE)))
-        HGOTO_ERROR(H5E_DATASPACE, H5E_BADTYPE, H5I_INVALID_HID, "not a dataspace");
+        HGOTO_ERROR(H5E_DATASPACE, H5E_BADTYPE, FAIL, "not a dataspace");
     if (NULL == (dst_space = (H5S_t *)H5I_object_verify(dst_space_id, H5I_DATASPACE)))
-        HGOTO_ERROR(H5E_DATASPACE, H5E_BADTYPE, H5I_INVALID_HID, "not a dataspace");
+        HGOTO_ERROR(H5E_DATASPACE, H5E_BADTYPE, FAIL, "not a dataspace");
     if (NULL == (src_intersect_space = (H5S_t *)H5I_object_verify(src_intersect_space_id, H5I_DATASPACE)))
-        HGOTO_ERROR(H5E_DATASPACE, H5E_BADTYPE, H5I_INVALID_HID, "not a dataspace");
+        HGOTO_ERROR(H5E_DATASPACE, H5E_BADTYPE, FAIL, "not a dataspace");
 
     /* Check numbers of points selected matches in source and destination */
     if (H5S_GET_SELECT_NPOINTS(src_space) != H5S_GET_SELECT_NPOINTS(dst_space))
-        HGOTO_ERROR(H5E_DATASPACE, H5E_BADVALUE, H5I_INVALID_HID,
+        HGOTO_ERROR(H5E_DATASPACE, H5E_BADVALUE, FAIL,
                     "number of points selected in source space does not match that in destination space");
 
     /* Check numbers of dimensions matches in source and source intersect spaces
      */
     if (H5S_GET_EXTENT_NDIMS(src_space) != H5S_GET_EXTENT_NDIMS(src_intersect_space))
-        HGOTO_ERROR(H5E_DATASPACE, H5E_BADVALUE, H5I_INVALID_HID,
+        HGOTO_ERROR(H5E_DATASPACE, H5E_BADVALUE, FAIL,
                     "rank of source space does not match rank of source intersect space");
 
     /* Perform operation */
     if (H5S_select_project_intersection(src_space, dst_space, src_intersect_space, &proj_space, false) < 0)
-        HGOTO_ERROR(H5E_DATASET, H5E_CANTCLIP, H5I_INVALID_HID, "can't project dataspace intersection");
+        HGOTO_ERROR(H5E_DATASET, H5E_CANTCLIP, FAIL, "can't project dataspace intersection");
 
     /* Register */
     if ((ret_value = H5I_register(H5I_DATASPACE, proj_space, true)) < 0)
-        HGOTO_ERROR(H5E_ID, H5E_CANTREGISTER, H5I_INVALID_HID, "unable to register dataspace ID");
+        HGOTO_ERROR(H5E_ID, H5E_CANTREGISTER, FAIL, "unable to register dataspace ID");
 
 done:
     if (ret_value < 0)
         if (proj_space && H5S_close(proj_space) < 0)
-            HDONE_ERROR(H5E_DATASPACE, H5E_CANTRELEASE, H5I_INVALID_HID, "unable to release dataspace");
+            HDONE_ERROR(H5E_DATASPACE, H5E_CANTRELEASE, FAIL, "unable to release dataspace");
 
     FUNC_LEAVE_API(ret_value)
 } /* end H5Sselect_project_intersection() */

@@ -133,6 +133,7 @@ add_custom_command (TARGET H5match_types POST_BUILD
     BYPRODUCTS ${HDF5_F90_BINARY_DIR}/H5f90i_gen.h ${HDF5_F90_BINARY_DIR}/H5fortran_types.F90
     COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:H5match_types>
     WORKING_DIRECTORY ${HDF5_F90_BINARY_DIR}
+    DEPENDS H5match_types
 )
 
 if (BUILD_STATIC_LIBS)
@@ -143,6 +144,7 @@ if (BUILD_STATIC_LIBS)
       COMMAND    ${CMAKE_COMMAND}
       ARGS       -E copy_if_different ${HDF5_F90_BINARY_DIR}/H5fortran_types.F90 ${HDF5_F90_BINARY_DIR}/static/H5fortran_types.F90
       WORKING_DIRECTORY ${HDF5_F90_BINARY_DIR}/static
+      DEPENDS H5_buildiface H5match_types ${HDF5_F90_BINARY_DIR}/H5f90i_gen.h
   )
   set_source_files_properties (${HDF5_F90_BINARY_DIR}/static/H5f90i_gen.h PROPERTIES GENERATED TRUE)
   set_source_files_properties (${HDF5_F90_BINARY_DIR}/static/H5fortran_types.F90 PROPERTIES GENERATED TRUE)
@@ -155,6 +157,7 @@ if (BUILD_SHARED_LIBS)
       COMMAND    ${CMAKE_COMMAND}
       ARGS       -E copy_if_different ${HDF5_F90_BINARY_DIR}/H5fortran_types.F90 ${HDF5_F90_BINARY_DIR}/shared/H5fortran_types.F90
       WORKING_DIRECTORY ${HDF5_F90_BINARY_DIR}/shared
+      DEPENDS H5_buildiface H5match_types ${HDF5_F90_BINARY_DIR}/H5f90i_gen.h
   )
   set_source_files_properties (${HDF5_F90_BINARY_DIR}/shared/H5f90i_gen.h PROPERTIES GENERATED TRUE)
   set_source_files_properties (${HDF5_F90_BINARY_DIR}/shared/H5fortran_types.F90 PROPERTIES GENERATED TRUE)
@@ -283,6 +286,7 @@ add_custom_command (TARGET H5_buildiface POST_BUILD
     BYPRODUCTS ${HDF5_F90_BINARY_DIR}/H5_gen.F90
     COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:H5_buildiface>
     WORKING_DIRECTORY ${HDF5_F90_BINARY_DIR}
+    DEPENDS H5_buildiface ${f90_F_GEN_SOURCES}
     COMMENT "Generating the H5_gen.F90 file"
 )
 if (BUILD_STATIC_LIBS)
@@ -291,6 +295,7 @@ if (BUILD_STATIC_LIBS)
       COMMAND    ${CMAKE_COMMAND}
       ARGS       -E copy_if_different ${HDF5_F90_BINARY_DIR}/H5_gen.F90 ${HDF5_F90_BINARY_DIR}/static/H5_gen.F90
       WORKING_DIRECTORY ${HDF5_F90_BINARY_DIR}/static
+      DEPENDS H5_buildiface ${HDF5_F90_BINARY_DIR}/H5_gen.F90
       COMMENT "Generating the H5_gen.F90 file"
   )
   add_custom_target (H5gen ALL
@@ -305,6 +310,7 @@ if (BUILD_SHARED_LIBS)
       COMMAND    ${CMAKE_COMMAND}
       ARGS       -E copy_if_different ${HDF5_F90_BINARY_DIR}/H5_gen.F90 ${HDF5_F90_BINARY_DIR}/shared/H5_gen.F90
       WORKING_DIRECTORY ${HDF5_F90_BINARY_DIR}/shared
+      DEPENDS ${HDF5_F90_BINARY_DIR}/H5_gen.F90
       COMMENT "Generating the H5_gen.F90 shared file"
   )
   add_custom_target (H5genSH ALL

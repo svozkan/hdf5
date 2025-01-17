@@ -4,7 +4,7 @@
  *                                                                           *
  * This file is part of HDF5.  The full HDF5 copyright notice, including     *
  * terms governing use, modification, and redistribution, is contained in    *
- * the LICENSE file, which can be found at the root of the source code       *
+ * the COPYING file, which can be found at the root of the source code       *
  * distribution tree, or in https://www.hdfgroup.org/licenses.               *
  * If you do not have access to either file, you may request a copy from     *
  * help@hdfgroup.org.                                                        *
@@ -116,13 +116,6 @@ dump_attr_cb(hid_t oid, const char *attr_name, const H5A_info_t H5_ATTR_UNUSED *
         string_dataformat.fmt_double = fp_format;
         string_dataformat.fmt_float  = fp_format;
     }
-    if (fp_lformat) {
-        string_dataformat.fmt_ldouble = fp_lformat;
-    }
-    if (complex_format) {
-        string_dataformat.fmt_double_complex = complex_format;
-        string_dataformat.fmt_float_complex  = complex_format;
-    }
 
     if (h5tools_nCols == 0) {
         string_dataformat.line_ncols    = 65535;
@@ -181,13 +174,6 @@ dump_all_cb(hid_t group, const char *name, const H5L_info2_t *linfo, void H5_ATT
     if (fp_format) {
         string_dataformat.fmt_double = fp_format;
         string_dataformat.fmt_float  = fp_format;
-    }
-    if (fp_lformat) {
-        string_dataformat.fmt_ldouble = fp_lformat;
-    }
-    if (complex_format) {
-        string_dataformat.fmt_double_complex = complex_format;
-        string_dataformat.fmt_float_complex  = complex_format;
     }
 
     if (h5tools_nCols == 0) {
@@ -660,13 +646,6 @@ dump_named_datatype(hid_t tid, const char *name)
         string_dataformat.fmt_double = fp_format;
         string_dataformat.fmt_float  = fp_format;
     }
-    if (fp_lformat) {
-        string_dataformat.fmt_ldouble = fp_lformat;
-    }
-    if (complex_format) {
-        string_dataformat.fmt_double_complex = complex_format;
-        string_dataformat.fmt_float_complex  = complex_format;
-    }
 
     if (h5tools_nCols == 0) {
         string_dataformat.line_ncols    = 65535;
@@ -823,13 +802,6 @@ dump_group(hid_t gid, const char *name)
         string_dataformat.fmt_double = fp_format;
         string_dataformat.fmt_float  = fp_format;
     }
-    if (fp_lformat) {
-        string_dataformat.fmt_ldouble = fp_lformat;
-    }
-    if (complex_format) {
-        string_dataformat.fmt_double_complex = complex_format;
-        string_dataformat.fmt_float_complex  = complex_format;
-    }
 
     if (h5tools_nCols == 0) {
         string_dataformat.line_ncols    = 65535;
@@ -956,13 +928,6 @@ dump_dataset(hid_t did, const char *name, struct subset_t *sset)
         string_dataformat.fmt_double = fp_format;
         string_dataformat.fmt_float  = fp_format;
     }
-    if (fp_lformat) {
-        string_dataformat.fmt_ldouble = fp_lformat;
-    }
-    if (complex_format) {
-        string_dataformat.fmt_double_complex = complex_format;
-        string_dataformat.fmt_float_complex  = complex_format;
-    }
 
     if (h5tools_nCols == 0) {
         string_dataformat.line_ncols    = 65535;
@@ -1073,8 +1038,7 @@ dump_dataset(hid_t did, const char *name, struct subset_t *sset)
                 case H5T_REFERENCE:
                 case H5T_ENUM:
                 case H5T_VLEN:
-                case H5T_ARRAY:
-                case H5T_COMPLEX: {
+                case H5T_ARRAY: {
                     h5tools_dump_data(rawoutstream, outputformat, &ctx, did, true);
                 } break;
 
@@ -1133,13 +1097,6 @@ dump_data(hid_t obj_id, int obj_data, struct subset_t *sset, int display_index)
     if (fp_format) {
         string_dataformat.fmt_double = fp_format;
         string_dataformat.fmt_float  = fp_format;
-    }
-    if (fp_lformat) {
-        string_dataformat.fmt_ldouble = fp_lformat;
-    }
-    if (complex_format) {
-        string_dataformat.fmt_double_complex = complex_format;
-        string_dataformat.fmt_float_complex  = complex_format;
     }
 
     if (h5tools_nCols == 0) {
@@ -1605,13 +1562,6 @@ handle_attributes(hid_t fid, const char *attr, void H5_ATTR_UNUSED *data, int H5
     if (fp_format) {
         string_dataformat.fmt_double = fp_format;
         string_dataformat.fmt_float  = fp_format;
-    }
-    if (fp_lformat) {
-        string_dataformat.fmt_ldouble = fp_lformat;
-    }
-    if (complex_format) {
-        string_dataformat.fmt_double_complex = complex_format;
-        string_dataformat.fmt_float_complex  = complex_format;
     }
 
     if (h5tools_nCols == 0) {

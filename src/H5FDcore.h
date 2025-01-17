@@ -4,7 +4,7 @@
  *                                                                           *
  * This file is part of HDF5.  The full HDF5 copyright notice, including     *
  * terms governing use, modification, and redistribution, is contained in    *
- * the LICENSE file, which can be found at the root of the source code       *
+ * the COPYING file, which can be found at the root of the source code       *
  * distribution tree, or in https://www.hdfgroup.org/licenses.               *
  * If you do not have access to either file, you may request a copy from     *
  * help@hdfgroup.org.                                                        *
@@ -16,11 +16,8 @@
 #ifndef H5FDcore_H
 #define H5FDcore_H
 
-/* Public header files */
-#include "H5FDpublic.h" /* File drivers             */
-
-/** ID for the core VFD */
-#define H5FD_CORE (H5OPEN H5FD_CORE_id_g)
+/** Initializer for the core VFD */
+#define H5FD_CORE (H5FDperform_init(H5FD_core_init))
 
 /** Identifier for the core VFD */
 #define H5FD_CORE_VALUE H5_VFD_CORE
@@ -31,9 +28,9 @@ extern "C" {
 
 /** @private
  *
- * \brief ID for the core VFD
+ * \brief Private initializer for the core VFD
  */
-H5_DLLVAR hid_t H5FD_CORE_id_g;
+H5_DLL hid_t H5FD_core_init(void);
 
 /**
  * \ingroup FAPL

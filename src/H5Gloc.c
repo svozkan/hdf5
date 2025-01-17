@@ -4,7 +4,7 @@
  *                                                                           *
  * This file is part of HDF5.  The full HDF5 copyright notice, including     *
  * terms governing use, modification, and redistribution, is contained in    *
- * the LICENSE file, which can be found at the root of the source code       *
+ * the COPYING file, which can be found at the root of the source code       *
  * distribution tree, or in https://www.hdfgroup.org/licenses.               *
  * If you do not have access to either file, you may request a copy from     *
  * help@hdfgroup.org.                                                        *
@@ -233,7 +233,7 @@ H5G_loc_real(void *obj, H5I_type_t type, H5G_loc_t *loc)
         case H5I_BADID:
         case H5I_NTYPES:
         default:
-            HGOTO_ERROR(H5E_ARGS, H5E_BADVALUE, FAIL, "invalid location type");
+            HGOTO_ERROR(H5E_ARGS, H5E_BADVALUE, FAIL, "invalid location ID");
     } /* end switch */
 
 done:
@@ -581,13 +581,17 @@ H5G__loc_exists_cb(H5G_loc_t H5_ATTR_UNUSED *grp_loc /*in*/, const char H5_ATTR_
                    const H5O_link_t H5_ATTR_UNUSED *lnk, H5G_loc_t *obj_loc, void *_udata /*in,out*/,
                    H5G_own_loc_t *own_loc /*out*/)
 {
-    bool *exists = (bool *)_udata; /* User data passed in */
+    bool  *exists    = (bool *)_udata; /* User data passed in */
+    herr_t ret_value = SUCCEED;        /* Return value */
 
-    FUNC_ENTER_PACKAGE_NOERR
+    FUNC_ENTER_PACKAGE
 
     /* Check if the name in this group resolved to a valid object */
     if (obj_loc == NULL)
-        *exists = false;
+        if (lnk)
+            *exists = false;
+        else
+            HGOTO_ERROR(H5E_SYM, H5E_NOTFOUND, FAIL, "no object or link info?");
     else
         *exists = true;
 
@@ -595,7 +599,8 @@ H5G__loc_exists_cb(H5G_loc_t H5_ATTR_UNUSED *grp_loc /*in*/, const char H5_ATTR_
      * location for the object */
     *own_loc = H5G_OWN_NONE;
 
-    FUNC_LEAVE_NOAPI(SUCCEED)
+done:
+    FUNC_LEAVE_NOAPI(ret_value)
 } /* end H5G__loc_exists_cb() */
 
 /*-------------------------------------------------------------------------
@@ -603,7 +608,8 @@ H5G__loc_exists_cb(H5G_loc_t H5_ATTR_UNUSED *grp_loc /*in*/, const char H5_ATTR_
  *
  * Purpose:	Check if an object actually exists at a location
  *
- * Return:	Non-negative on success/Negative on failure
+ * Return:	Success:	true/false
+ * 		Failure:	Negative
  *
  *-------------------------------------------------------------------------
  */

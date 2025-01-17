@@ -4,7 +4,7 @@
  *                                                                           *
  * This file is part of HDF5.  The full HDF5 copyright notice, including     *
  * terms governing use, modification, and redistribution, is contained in    *
- * the LICENSE file, which can be found at the root of the source code       *
+ * the COPYING file, which can be found at the root of the source code       *
  * distribution tree, or in https://www.hdfgroup.org/licenses.               *
  * If you do not have access to either file, you may request a copy from     *
  * help@hdfgroup.org.                                                        *
@@ -22,11 +22,10 @@
 /***********/
 /* Headers */
 /***********/
-#include "H5private.h"   /* Generic Functions                    */
-#include "H5CXprivate.h" /* API Contexts                         */
-#include "H5Eprivate.h"  /* Error handling                       */
-#include "H5Iprivate.h"  /* IDs                                  */
-#include "H5Tconv.h"     /* Datatype conversions                 */
+#include "H5CXprivate.h"
+#include "H5Eprivate.h"
+#include "H5Iprivate.h"
+#include "H5Tconv.h"
 #include "H5Tconv_vlen.h"
 
 /****************/
@@ -57,7 +56,7 @@ H5FL_BLK_DEFINE_STATIC(vlen_seq);
  * Function:    H5T__conv_vlen_nested_free
  *
  * Purpose:     Recursively locates and frees any nested VLEN components of
- *              composite data types (including COMPOUND).
+ *              complex data types (including COMPOUND).
  *
  * Return:      Non-negative on success/Negative on failure.
  *
@@ -101,7 +100,6 @@ H5T__conv_vlen_nested_free(uint8_t *buf, H5T_t *dt)
         case H5T_OPAQUE:
         case H5T_REFERENCE:
         case H5T_ENUM:
-        case H5T_COMPLEX:
             /* These types cannot contain vl data */
             break;
 

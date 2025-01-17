@@ -4,7 +4,7 @@
 #
 # This file is part of HDF5.  The full HDF5 copyright notice, including
 # terms governing use, modification, and redistribution, is contained in
-# the LICENSE file, which can be found at the root of the source code
+# the COPYING file, which can be found at the root of the source code
 # distribution tree, or in https://www.hdfgroup.org/licenses.
 # If you do not have access to either file, you may request a copy from
 # help@hdfgroup.org.
@@ -26,7 +26,7 @@
   option (HDF5_DISABLE_TESTS_REGEX "Regex pattern to set execution of specific tests to DISABLED" "")
   mark_as_advanced (HDF5_DISABLE_TESTS_REGEX)
 
-  option (HDF5_TEST_API "Execute HDF5 API tests" ON)
+  option (HDF5_TEST_API "Execute HDF5 API tests" OFF)
   mark_as_advanced (HDF5_TEST_API)
   if (HDF5_TEST_API)
     option (HDF5_TEST_API_INSTALL "Install HDF5 API tests" OFF)

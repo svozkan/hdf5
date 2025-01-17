@@ -4,7 +4,7 @@
  *                                                                           *
  * This file is part of HDF5.  The full HDF5 copyright notice, including     *
  * terms governing use, modification, and redistribution, is contained in    *
- * the LICENSE file, which can be found at the root of the source code       *
+ * the COPYING file, which can be found at the root of the source code       *
  * distribution tree, or in https://www.hdfgroup.org/licenses.               *
  * If you do not have access to either file, you may request a copy from     *
  * help@hdfgroup.org.                                                        *
@@ -75,15 +75,15 @@
 /**
  * For major interface/format changes
  */
-#define H5_VERS_MAJOR 2
+#define H5_VERS_MAJOR 1
 /**
  * For minor interface/format changes
  */
-#define H5_VERS_MINOR 0
+#define H5_VERS_MINOR 14
 /**
  * For tweaks, bug-fixes, or development
  */
-#define H5_VERS_RELEASE 0
+#define H5_VERS_RELEASE 5
 /**
  * For pre-releases like \c snap0. Empty string for official releases.
  */
@@ -91,11 +91,11 @@
 /**
  * Short version string
  */
-#define H5_VERS_STR "2.0.0"
+#define H5_VERS_STR "1.14.5"
 /**
  * Full version string
  */
-#define H5_VERS_INFO "HDF5 library version: 2.0.0"
+#define H5_VERS_INFO "HDF5 library version: 1.14.5"
 
 #define H5check() H5check_version(H5_VERS_MAJOR, H5_VERS_MINOR, H5_VERS_RELEASE)
 
@@ -300,22 +300,6 @@ typedef long long ssize_t;
  */
 typedef uint64_t hsize_t;
 
-/* off_t exists on Windows, but is always a 32-bit long, even on 64-bit Windows,
- * so on Windows we define HDoff_t to be int64_t, which is equivalent to __int64,
- * the type of the st_size field of the _stati64 struct.
- */
-#ifdef H5_HAVE_WIN32_API
-/**
- * Platform-independent offset
- */
-typedef int64_t HDoff_t;
-#else
-/**
- * Platform-independent offset
- */
-typedef off_t HDoff_t;
-#endif
-
 #ifdef H5_HAVE_PARALLEL
 #define HSIZE_AS_MPI_TYPE MPI_UINT64_T
 #endif
@@ -327,22 +311,15 @@ typedef off_t HDoff_t;
  * should be discouraged in new code.
  */
 typedef int64_t hssize_t;
-/** d print conversion specifier for signed integer type \since 1.10.8 */
-#define PRIdHSIZE PRId64
-/** i print conversion specifier for signed integer type \since 1.10.8 */
-#define PRIiHSIZE PRIi64
-/** o print conversion specifier for signed integer type \since 1.10.8 */
-#define PRIoHSIZE PRIo64
-/** u print conversion specifier for signed integer type \since 1.10.8 */
-#define PRIuHSIZE PRIu64
-/** x print conversion specifier for signed integer type \since 1.10.8 */
-#define PRIxHSIZE PRIx64
-/** X print conversion specifier for signed integer type \since 1.10.8 */
+#define PRIdHSIZE          PRId64
+#define PRIiHSIZE          PRIi64
+#define PRIoHSIZE          PRIo64
+#define PRIuHSIZE          PRIu64
+#define PRIxHSIZE          PRIx64
 #define PRIXHSIZE          PRIX64
 #define H5_SIZEOF_HSIZE_T  8
 #define H5_SIZEOF_HSSIZE_T 8
-/** Represents the largest possible value of uint64_t \since 1.10.0 */
-#define HSIZE_UNDEF UINT64_MAX
+#define HSIZE_UNDEF        UINT64_MAX
 
 /**
  * The address of an object in the file.
@@ -350,15 +327,10 @@ typedef int64_t hssize_t;
  * \internal Defined as a (minimum) 64-bit unsigned integer type.
  */
 typedef uint64_t haddr_t;
-/** d print conversion specifier for unsigned integer type \since 1.8.23 */
-#define PRIdHADDR PRId64
-/** o print conversion specifier for unsigned integer type \since 1.8.23 */
-#define PRIoHADDR PRIo64
-/** u print conversion specifier for unsigned integer type \since 1.8.23 */
-#define PRIuHADDR PRIu64
-/** x print conversion specifier for unsigned integer type \since 1.8.23 */
-#define PRIxHADDR PRIx64
-/** X print conversion specifier for unsigned integer type \since 1.8.23 */
+#define PRIdHADDR           PRId64
+#define PRIoHADDR           PRIo64
+#define PRIuHADDR           PRIu64
+#define PRIxHADDR           PRIx64
 #define PRIXHADDR           PRIX64
 #define H5_SIZEOF_HADDR_T   8
 #define HADDR_UNDEF         UINT64_MAX
@@ -419,8 +391,6 @@ typedef struct H5_ih_info_t {
  * \details Tokens are unique and permanent identifiers that are
  *          used to reference HDF5 objects in a container. This allows
  *          for 128-bit tokens
- *
- * \since 1.12.0
  */
 #define H5O_MAX_TOKEN_SIZE (16)
 
@@ -444,42 +414,9 @@ typedef void (*H5_atclose_func_t)(void *ctx);
 /* API adapter header (defines H5_DLL, etc.) */
 #include "H5api_adpt.h"
 
-/*
- * Does the compiler support the __builtin_expect() syntax?
- * It's not a problem if not.
- */
-#if H5_HAVE_BUILTIN_EXPECT
-#define H5_LIKELY(expression)   __builtin_expect(!!(expression), 1)
-#define H5_UNLIKELY(expression) __builtin_expect(!!(expression), 0)
-#else
-#define H5_LIKELY(expression)   (expression)
-#define H5_UNLIKELY(expression) (expression)
-#endif
-
-/* Definition of H5OPEN macro used for returning library defined IDs to
- * applications with macros, e.g. H5FD_SEC2.  Will only call H5open() for
- * the application  once per library init/term epoch, and will not call
- * H5open() when a macro that uses it is used within the library.
- * Note: for library source, this coding pattern requires that H5private.h
- * is the first library private header file included in the source file.
- */
-#undef H5OPEN
-#ifndef H5private_H
-#define H5OPEN (H5_UNLIKELY(!H5_libinit_g && !H5_libterm_g) ? H5open() : 0),
-#else /* H5private_H */
-#define H5OPEN
-#endif /* H5private_H */
-
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-/** @private
- *
- * \brief Library init / term status (global)
- */
-H5_DLLVAR bool H5_libinit_g; /* Has the library been initialized? */
-H5_DLLVAR bool H5_libterm_g; /* Is the library being shutdown? */
 
 /* Functions in H5.c */
 /**

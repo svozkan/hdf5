@@ -4,7 +4,7 @@
  *                                                                           *
  * This file is part of HDF5.  The full HDF5 copyright notice, including     *
  * terms governing use, modification, and redistribution, is contained in    *
- * the LICENSE file, which can be found at the root of the source code       *
+ * the COPYING file, which can be found at the root of the source code       *
  * distribution tree, or in https://www.hdfgroup.org/licenses.               *
  * If you do not have access to either file, you may request a copy from     *
  * help@hdfgroup.org.                                                        *
@@ -12,57 +12,42 @@
 
 #include "H5_api_async_test_parallel.h"
 
-static void print_async_test_header(void *params);
+#ifdef H5ESpublic_H
 
-static void
-print_async_test_header(void *params)
-{
-    bool coll_md_read = true;
+static int test_one_dataset_io(void);
+static int test_multi_dataset_io(void);
+static int test_multi_file_dataset_io(void);
+static int test_multi_file_grp_dset_io(void);
+static int test_set_extent(void);
+static int test_attribute_exists(void);
+static int test_attribute_io(void);
+static int test_attribute_io_tconv(void);
+static int test_attribute_io_compound(void);
+static int test_group(void);
+static int test_link(void);
+static int test_ocopy_orefresh(void);
+static int test_file_reopen(void);
 
-    if (params)
-        coll_md_read = *(const bool *)params;
+/*
+ * The array of parallel async tests to be performed.
+ */
+static int (*par_async_tests[])(void) = {
+    test_one_dataset_io,
+    test_multi_dataset_io,
+    test_multi_file_dataset_io,
+    test_multi_file_grp_dset_io,
+    test_set_extent,
+    test_attribute_exists,
+    test_attribute_io,
+    test_attribute_io_tconv,
+    test_attribute_io_compound,
+    test_group,
+    test_link,
+    test_ocopy_orefresh,
+    test_file_reopen,
+};
 
-    if (coll_md_read) {
-        if (MAINPROCESS) {
-            printf("\n");
-            printf("**********************************************\n");
-            printf("*                                            *\n");
-            printf("*          API Parallel Async Tests          *\n");
-            printf("*                                            *\n");
-            printf("**********************************************\n\n");
-
-#ifndef H5_API_TEST_HAVE_ASYNC
-            printf("SKIPPED due to no async support\n");
-#endif
-        }
-    }
-#ifdef H5_API_TEST_HAVE_ASYNC
-    else if (MAINPROCESS) {
-        printf("\n");
-        printf("****************************************************\n");
-        printf("*                                                  *\n");
-        printf("* Re-running tests with independent metadata reads *\n");
-        printf("*                                                  *\n");
-        printf("****************************************************\n\n");
-    }
-#endif
-}
-
-#ifdef H5_API_TEST_HAVE_ASYNC
-
-static void test_async_one_dataset_io(void *params);
-static void test_async_multi_dataset_io(void *params);
-static void test_async_multi_file_dataset_io(void *params);
-static void test_async_multi_file_grp_dset_io(void *params);
-static void test_async_set_extent(void *params);
-static void test_async_attribute_exists(void *params);
-static void test_async_attribute_io(void *params);
-static void test_async_attribute_io_tconv(void *params);
-static void test_async_attribute_io_compound(void *params);
-static void test_async_group(void *params);
-static void test_async_link(void *params);
-static void test_async_ocopy_orefresh(void *params);
-static void test_async_file_reopen(void *params);
+bool coll_metadata_read = true;
 
 /* Highest "printf" file created (starting at 0) */
 int max_printf_file = -1;
@@ -72,8 +57,8 @@ int max_printf_file = -1;
  * of the dataset.
  */
 #define ONE_DATASET_IO_TEST_SPACE_RANK 2
-static void
-test_async_one_dataset_io(void *params)
+static int
+test_one_dataset_io(void)
 {
     hsize_t *dims = NULL;
     hsize_t  start[ONE_DATASET_IO_TEST_SPACE_RANK];
@@ -94,11 +79,8 @@ test_async_one_dataset_io(void *params)
 
     TESTING_MULTIPART("single dataset I/O");
 
-    TESTING_2("test setup");
-
     /* Make sure the connector supports the API functions being tested */
-    if (!(vol_cap_flags_g & H5VL_CAP_FLAG_ASYNC) || !(vol_cap_flags_g & H5VL_CAP_FLAG_FILE_BASIC) ||
-        !(vol_cap_flags_g & H5VL_CAP_FLAG_DATASET_BASIC) ||
+    if (!(vol_cap_flags_g & H5VL_CAP_FLAG_FILE_BASIC) || !(vol_cap_flags_g & H5VL_CAP_FLAG_DATASET_BASIC) ||
         !(vol_cap_flags_g & H5VL_CAP_FLAG_FLUSH_REFRESH)) {
         if (MAINPROCESS) {
             SKIPPED();
@@ -106,10 +88,12 @@ test_async_one_dataset_io(void *params)
                 "    API functions for basic file, dataset, or flush aren't supported with this connector\n");
         }
 
-        return;
+        return 0;
     }
 
-    if ((fapl_id = create_mpi_fapl(MPI_COMM_WORLD, MPI_INFO_NULL, *(const bool *)params)) < 0)
+    TESTING_2("test setup");
+
+    if ((fapl_id = create_mpi_fapl(MPI_COMM_WORLD, MPI_INFO_NULL, coll_metadata_read)) < 0)
         TEST_ERROR;
 
     /* Create dataspace */
@@ -405,7 +389,7 @@ test_async_one_dataset_io(void *params)
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -426,7 +410,7 @@ error:
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 #undef ONE_DATASET_IO_TEST_SPACE_RANK
 
@@ -437,8 +421,8 @@ error:
  */
 #define MULTI_DATASET_IO_TEST_SPACE_RANK 2
 #define MULTI_DATASET_IO_TEST_NDSETS     5
-static void
-test_async_multi_dataset_io(void *params)
+static int
+test_multi_dataset_io(void)
 {
     hsize_t *dims = NULL;
     hsize_t  start[MULTI_DATASET_IO_TEST_SPACE_RANK];
@@ -450,7 +434,7 @@ test_async_multi_dataset_io(void *params)
     hid_t    file_id                               = H5I_INVALID_HID;
     hid_t    fapl_id                               = H5I_INVALID_HID;
     hid_t    dset_id[MULTI_DATASET_IO_TEST_NDSETS] = {H5I_INVALID_HID, H5I_INVALID_HID, H5I_INVALID_HID,
-                                                      H5I_INVALID_HID, H5I_INVALID_HID};
+                                                   H5I_INVALID_HID, H5I_INVALID_HID};
     hid_t    space_id                              = H5I_INVALID_HID;
     hid_t    mspace_id                             = H5I_INVALID_HID;
     hid_t    es_id                                 = H5I_INVALID_HID;
@@ -460,11 +444,8 @@ test_async_multi_dataset_io(void *params)
 
     TESTING_MULTIPART("multi dataset I/O");
 
-    TESTING_2("test setup");
-
     /* Make sure the connector supports the API functions being tested */
-    if (!(vol_cap_flags_g & H5VL_CAP_FLAG_ASYNC) || !(vol_cap_flags_g & H5VL_CAP_FLAG_FILE_BASIC) ||
-        !(vol_cap_flags_g & H5VL_CAP_FLAG_DATASET_BASIC) ||
+    if (!(vol_cap_flags_g & H5VL_CAP_FLAG_FILE_BASIC) || !(vol_cap_flags_g & H5VL_CAP_FLAG_DATASET_BASIC) ||
         !(vol_cap_flags_g & H5VL_CAP_FLAG_FLUSH_REFRESH)) {
         if (MAINPROCESS) {
             SKIPPED();
@@ -472,10 +453,12 @@ test_async_multi_dataset_io(void *params)
                 "    API functions for basic file, dataset, or flush aren't supported with this connector\n");
         }
 
-        return;
+        return 0;
     }
 
-    if ((fapl_id = create_mpi_fapl(MPI_COMM_WORLD, MPI_INFO_NULL, *(const bool *)params)) < 0)
+    TESTING_2("test setup");
+
+    if ((fapl_id = create_mpi_fapl(MPI_COMM_WORLD, MPI_INFO_NULL, coll_metadata_read)) < 0)
         TEST_ERROR;
 
     /* Create dataspace */
@@ -729,7 +712,7 @@ test_async_multi_dataset_io(void *params)
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -751,7 +734,7 @@ error:
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 #undef MULTI_DATASET_IO_TEST_SPACE_RANK
 #undef MULTI_DATASET_IO_TEST_NDSETS
@@ -762,8 +745,8 @@ error:
  */
 #define MULTI_FILE_DATASET_IO_TEST_SPACE_RANK 2
 #define MULTI_FILE_DATASET_IO_TEST_NFILES     5
-static void
-test_async_multi_file_dataset_io(void *params)
+static int
+test_multi_file_dataset_io(void)
 {
     hsize_t *dims = NULL;
     hsize_t  start[MULTI_FILE_DATASET_IO_TEST_SPACE_RANK];
@@ -775,9 +758,9 @@ test_async_multi_file_dataset_io(void *params)
     size_t   i, j, data_size, num_in_progress;
     hid_t    fapl_id                                    = H5I_INVALID_HID;
     hid_t    file_id[MULTI_FILE_DATASET_IO_TEST_NFILES] = {H5I_INVALID_HID, H5I_INVALID_HID, H5I_INVALID_HID,
-                                                           H5I_INVALID_HID, H5I_INVALID_HID};
+                                                        H5I_INVALID_HID, H5I_INVALID_HID};
     hid_t    dset_id[MULTI_FILE_DATASET_IO_TEST_NFILES] = {H5I_INVALID_HID, H5I_INVALID_HID, H5I_INVALID_HID,
-                                                           H5I_INVALID_HID, H5I_INVALID_HID};
+                                                        H5I_INVALID_HID, H5I_INVALID_HID};
     hid_t    space_id                                   = H5I_INVALID_HID;
     hid_t    mspace_id                                  = H5I_INVALID_HID;
     hid_t    es_id                                      = H5I_INVALID_HID;
@@ -787,11 +770,8 @@ test_async_multi_file_dataset_io(void *params)
 
     TESTING_MULTIPART("multi file dataset I/O");
 
-    TESTING_2("test setup");
-
     /* Make sure the connector supports the API functions being tested */
-    if (!(vol_cap_flags_g & H5VL_CAP_FLAG_ASYNC) || !(vol_cap_flags_g & H5VL_CAP_FLAG_FILE_BASIC) ||
-        !(vol_cap_flags_g & H5VL_CAP_FLAG_DATASET_BASIC) ||
+    if (!(vol_cap_flags_g & H5VL_CAP_FLAG_FILE_BASIC) || !(vol_cap_flags_g & H5VL_CAP_FLAG_DATASET_BASIC) ||
         !(vol_cap_flags_g & H5VL_CAP_FLAG_FLUSH_REFRESH)) {
         if (MAINPROCESS) {
             SKIPPED();
@@ -799,10 +779,12 @@ test_async_multi_file_dataset_io(void *params)
                 "    API functions for basic file, dataset, or flush aren't supported with this connector\n");
         }
 
-        return;
+        return 0;
     }
 
-    if ((fapl_id = create_mpi_fapl(MPI_COMM_WORLD, MPI_INFO_NULL, *(const bool *)params)) < 0)
+    TESTING_2("test setup");
+
+    if ((fapl_id = create_mpi_fapl(MPI_COMM_WORLD, MPI_INFO_NULL, coll_metadata_read)) < 0)
         TEST_ERROR;
 
     /* Create dataspace */
@@ -1154,7 +1136,7 @@ test_async_multi_file_dataset_io(void *params)
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -1177,7 +1159,7 @@ error:
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 #undef MULTI_FILE_DATASET_IO_TEST_SPACE_RANK
 #undef MULTI_FILE_DATASET_IO_TEST_NFILES
@@ -1188,8 +1170,8 @@ error:
  */
 #define MULTI_FILE_GRP_DSET_IO_TEST_SPACE_RANK 2
 #define MULTI_FILE_GRP_DSET_IO_TEST_NFILES     5
-static void
-test_async_multi_file_grp_dset_io(void *params)
+static int
+test_multi_file_grp_dset_io(void)
 {
     hsize_t *dims = NULL;
     hsize_t  start[MULTI_FILE_GRP_DSET_IO_TEST_SPACE_RANK];
@@ -1211,21 +1193,21 @@ test_async_multi_file_grp_dset_io(void *params)
 
     TESTING_MULTIPART("multi file dataset I/O with groups");
 
-    TESTING_2("test setup");
-
     /* Make sure the connector supports the API functions being tested */
-    if (!(vol_cap_flags_g & H5VL_CAP_FLAG_ASYNC) || !(vol_cap_flags_g & H5VL_CAP_FLAG_FILE_BASIC) ||
-        !(vol_cap_flags_g & H5VL_CAP_FLAG_GROUP_BASIC) || !(vol_cap_flags_g & H5VL_CAP_FLAG_DATASET_BASIC)) {
+    if (!(vol_cap_flags_g & H5VL_CAP_FLAG_FILE_BASIC) || !(vol_cap_flags_g & H5VL_CAP_FLAG_GROUP_BASIC) ||
+        !(vol_cap_flags_g & H5VL_CAP_FLAG_DATASET_BASIC)) {
         if (MAINPROCESS) {
             SKIPPED();
             printf(
                 "    API functions for basic file, group, or dataset aren't supported with this connector\n");
         }
 
-        return;
+        return 0;
     }
 
-    if ((fapl_id = create_mpi_fapl(MPI_COMM_WORLD, MPI_INFO_NULL, *(const bool *)params)) < 0)
+    TESTING_2("test setup");
+
+    if ((fapl_id = create_mpi_fapl(MPI_COMM_WORLD, MPI_INFO_NULL, coll_metadata_read)) < 0)
         TEST_ERROR;
 
     /* Create dataspace */
@@ -1570,7 +1552,7 @@ test_async_multi_file_grp_dset_io(void *params)
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -1592,7 +1574,7 @@ error:
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 #undef MULTI_FILE_GRP_DSET_IO_TEST_SPACE_RANK
 #undef MULTI_FILE_GRP_DSET_IO_TEST_NFILES
@@ -1605,8 +1587,8 @@ error:
  */
 #define SET_EXTENT_TEST_SPACE_RANK  2
 #define SET_EXTENT_TEST_NUM_EXTENDS 6
-static void
-test_async_set_extent(void *params)
+static int
+test_set_extent(void)
 {
     hsize_t *dims    = NULL;
     hsize_t *maxdims = NULL;
@@ -1633,8 +1615,7 @@ test_async_set_extent(void *params)
     TESTING("extending dataset");
 
     /* Make sure the connector supports the API functions being tested */
-    if (!(vol_cap_flags_g & H5VL_CAP_FLAG_ASYNC) || !(vol_cap_flags_g & H5VL_CAP_FLAG_FILE_BASIC) ||
-        !(vol_cap_flags_g & H5VL_CAP_FLAG_FLUSH_REFRESH) ||
+    if (!(vol_cap_flags_g & H5VL_CAP_FLAG_FILE_BASIC) || !(vol_cap_flags_g & H5VL_CAP_FLAG_FLUSH_REFRESH) ||
         !(vol_cap_flags_g & H5VL_CAP_FLAG_DATASET_BASIC) || !(vol_cap_flags_g & H5VL_CAP_FLAG_DATASET_MORE)) {
         if (MAINPROCESS) {
             SKIPPED();
@@ -1642,10 +1623,10 @@ test_async_set_extent(void *params)
                    "with this connector\n");
         }
 
-        return;
+        return 0;
     }
 
-    if ((fapl_id = create_mpi_fapl(MPI_COMM_WORLD, MPI_INFO_NULL, *(const bool *)params)) < 0)
+    if ((fapl_id = create_mpi_fapl(MPI_COMM_WORLD, MPI_INFO_NULL, coll_metadata_read)) < 0)
         TEST_ERROR;
 
     /* Create dataspace */
@@ -1910,7 +1891,7 @@ test_async_set_extent(void *params)
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -1937,7 +1918,7 @@ error:
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 #undef SET_EXTENT_TEST_SPACE_RANK
 #undef SET_EXTENT_TEST_NUM_EXTENDS
@@ -1948,8 +1929,8 @@ error:
  * attribute on the dataset.
  */
 #define ATTRIBUTE_EXISTS_TEST_SPACE_RANK 2
-static void
-test_async_attribute_exists(void *params)
+static int
+test_attribute_exists(void)
 {
     hsize_t *dims          = NULL;
     bool     op_failed     = false;
@@ -1967,8 +1948,7 @@ test_async_attribute_exists(void *params)
     TESTING("H5Aexists()");
 
     /* Make sure the connector supports the API functions being tested */
-    if (!(vol_cap_flags_g & H5VL_CAP_FLAG_ASYNC) || !(vol_cap_flags_g & H5VL_CAP_FLAG_FILE_BASIC) ||
-        !(vol_cap_flags_g & H5VL_CAP_FLAG_FLUSH_REFRESH) ||
+    if (!(vol_cap_flags_g & H5VL_CAP_FLAG_FILE_BASIC) || !(vol_cap_flags_g & H5VL_CAP_FLAG_FLUSH_REFRESH) ||
         !(vol_cap_flags_g & H5VL_CAP_FLAG_DATASET_BASIC) || !(vol_cap_flags_g & H5VL_CAP_FLAG_ATTR_BASIC)) {
         if (MAINPROCESS) {
             SKIPPED();
@@ -1976,10 +1956,10 @@ test_async_attribute_exists(void *params)
                    "supported with this connector\n");
         }
 
-        return;
+        return 0;
     }
 
-    if ((fapl_id = create_mpi_fapl(MPI_COMM_WORLD, MPI_INFO_NULL, *(const bool *)params)) < 0)
+    if ((fapl_id = create_mpi_fapl(MPI_COMM_WORLD, MPI_INFO_NULL, coll_metadata_read)) < 0)
         TEST_ERROR;
 
     /* Create dataspace */
@@ -2074,7 +2054,7 @@ test_async_attribute_exists(void *params)
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -2091,7 +2071,7 @@ error:
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 #undef ATTRIBUTE_EXISTS_TEST_SPACE_RANK
 
@@ -2101,8 +2081,8 @@ error:
  * verifies the data is correct.
  */
 #define ATTRIBUTE_IO_TEST_SPACE_RANK 2
-static void
-test_async_attribute_io(void *params)
+static int
+test_attribute_io(void)
 {
     hsize_t *dims          = NULL;
     bool     op_failed     = false;
@@ -2121,8 +2101,7 @@ test_async_attribute_io(void *params)
     TESTING("attribute I/O");
 
     /* Make sure the connector supports the API functions being tested */
-    if (!(vol_cap_flags_g & H5VL_CAP_FLAG_ASYNC) || !(vol_cap_flags_g & H5VL_CAP_FLAG_FILE_BASIC) ||
-        !(vol_cap_flags_g & H5VL_CAP_FLAG_FLUSH_REFRESH) ||
+    if (!(vol_cap_flags_g & H5VL_CAP_FLAG_FILE_BASIC) || !(vol_cap_flags_g & H5VL_CAP_FLAG_FLUSH_REFRESH) ||
         !(vol_cap_flags_g & H5VL_CAP_FLAG_DATASET_BASIC) || !(vol_cap_flags_g & H5VL_CAP_FLAG_ATTR_BASIC)) {
         if (MAINPROCESS) {
             SKIPPED();
@@ -2130,10 +2109,10 @@ test_async_attribute_io(void *params)
                    "supported with this connector\n");
         }
 
-        return;
+        return 0;
     }
 
-    if ((fapl_id = create_mpi_fapl(MPI_COMM_WORLD, MPI_INFO_NULL, *(const bool *)params)) < 0)
+    if ((fapl_id = create_mpi_fapl(MPI_COMM_WORLD, MPI_INFO_NULL, coll_metadata_read)) < 0)
         TEST_ERROR;
 
     /* Create dataspace */
@@ -2280,7 +2259,7 @@ test_async_attribute_io(void *params)
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -2301,7 +2280,7 @@ error:
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 
 /*
@@ -2310,8 +2289,8 @@ error:
  * attribute and verifies the data is correct.
  */
 #define ATTRIBUTE_IO_TCONV_TEST_SPACE_RANK 2
-static void
-test_async_attribute_io_tconv(void *params)
+static int
+test_attribute_io_tconv(void)
 {
     hsize_t *dims = NULL;
     bool     op_failed;
@@ -2329,18 +2308,18 @@ test_async_attribute_io_tconv(void *params)
     TESTING("attribute I/O with type conversion");
 
     /* Make sure the connector supports the API functions being tested */
-    if (!(vol_cap_flags_g & H5VL_CAP_FLAG_ASYNC) || !(vol_cap_flags_g & H5VL_CAP_FLAG_FILE_BASIC) ||
-        !(vol_cap_flags_g & H5VL_CAP_FLAG_FLUSH_REFRESH) || !(vol_cap_flags_g & H5VL_CAP_FLAG_ATTR_BASIC)) {
+    if (!(vol_cap_flags_g & H5VL_CAP_FLAG_FILE_BASIC) || !(vol_cap_flags_g & H5VL_CAP_FLAG_FLUSH_REFRESH) ||
+        !(vol_cap_flags_g & H5VL_CAP_FLAG_ATTR_BASIC)) {
         if (MAINPROCESS) {
             SKIPPED();
             printf("    API functions for basic file, attribute, or flush aren't supported with this "
                    "connector\n");
         }
 
-        return;
+        return 0;
     }
 
-    if ((fapl_id = create_mpi_fapl(MPI_COMM_WORLD, MPI_INFO_NULL, *(const bool *)params)) < 0)
+    if ((fapl_id = create_mpi_fapl(MPI_COMM_WORLD, MPI_INFO_NULL, coll_metadata_read)) < 0)
         TEST_ERROR;
 
     /* Create dataspace */
@@ -2475,7 +2454,7 @@ test_async_attribute_io_tconv(void *params)
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -2496,7 +2475,7 @@ error:
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 
 /*
@@ -2510,8 +2489,8 @@ typedef struct tattr_cmpd_t {
 } tattr_cmpd_t;
 
 #define ATTRIBUTE_IO_COMPOUND_TEST_SPACE_RANK 2
-static void
-test_async_attribute_io_compound(void *params)
+static int
+test_attribute_io_compound(void)
 {
     hsize_t      *dims = NULL;
     bool          op_failed;
@@ -2533,18 +2512,18 @@ test_async_attribute_io_compound(void *params)
     TESTING("attribute I/O with compound type conversion");
 
     /* Make sure the connector supports the API functions being tested */
-    if (!(vol_cap_flags_g & H5VL_CAP_FLAG_ASYNC) || !(vol_cap_flags_g & H5VL_CAP_FLAG_FILE_BASIC) ||
-        !(vol_cap_flags_g & H5VL_CAP_FLAG_FLUSH_REFRESH) || !(vol_cap_flags_g & H5VL_CAP_FLAG_ATTR_BASIC)) {
+    if (!(vol_cap_flags_g & H5VL_CAP_FLAG_FILE_BASIC) || !(vol_cap_flags_g & H5VL_CAP_FLAG_FLUSH_REFRESH) ||
+        !(vol_cap_flags_g & H5VL_CAP_FLAG_ATTR_BASIC)) {
         if (MAINPROCESS) {
             SKIPPED();
             printf("    API functions for basic file, dataset, dataset more, attribute, or flush aren't "
                    "supported with this connector\n");
         }
 
-        return;
+        return 0;
     }
 
-    if ((fapl_id = create_mpi_fapl(MPI_COMM_WORLD, MPI_INFO_NULL, *(const bool *)params)) < 0)
+    if ((fapl_id = create_mpi_fapl(MPI_COMM_WORLD, MPI_INFO_NULL, coll_metadata_read)) < 0)
         TEST_ERROR;
 
     /* Create dataspace */
@@ -2882,7 +2861,7 @@ test_async_attribute_io_compound(void *params)
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -2908,14 +2887,14 @@ error:
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 
 /*
  * Tests async group interfaces in parallel
  */
-static void
-test_async_group(void *params)
+static int
+test_group(void)
 {
     hid_t      file_id         = H5I_INVALID_HID;
     hid_t      fapl_id         = H5I_INVALID_HID;
@@ -2933,19 +2912,18 @@ test_async_group(void *params)
     TESTING("group operations");
 
     /* Make sure the connector supports the API functions being tested */
-    if (!(vol_cap_flags_g & H5VL_CAP_FLAG_ASYNC) || !(vol_cap_flags_g & H5VL_CAP_FLAG_FILE_BASIC) ||
-        !(vol_cap_flags_g & H5VL_CAP_FLAG_GROUP_BASIC) || !(vol_cap_flags_g & H5VL_CAP_FLAG_GROUP_MORE) ||
-        !(vol_cap_flags_g & H5VL_CAP_FLAG_FLUSH_REFRESH)) {
+    if (!(vol_cap_flags_g & H5VL_CAP_FLAG_FILE_BASIC) || !(vol_cap_flags_g & H5VL_CAP_FLAG_GROUP_BASIC) ||
+        !(vol_cap_flags_g & H5VL_CAP_FLAG_GROUP_MORE) || !(vol_cap_flags_g & H5VL_CAP_FLAG_FLUSH_REFRESH)) {
         if (MAINPROCESS) {
             SKIPPED();
             printf("    API functions for basic file, group, group more or flush aren't "
                    "supported with this connector\n");
         }
 
-        return;
+        return 0;
     }
 
-    if ((fapl_id = create_mpi_fapl(MPI_COMM_WORLD, MPI_INFO_NULL, *(const bool *)params)) < 0)
+    if ((fapl_id = create_mpi_fapl(MPI_COMM_WORLD, MPI_INFO_NULL, coll_metadata_read)) < 0)
         TEST_ERROR;
 
     /* Create GCPL */
@@ -3070,7 +3048,7 @@ test_async_group(void *params)
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -3086,14 +3064,14 @@ error:
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 
 /*
  * Tests async link interfaces in parallel
  */
-static void
-test_async_link(void *params)
+static int
+test_link(void)
 {
     hid_t  file_id         = H5I_INVALID_HID;
     hid_t  fapl_id         = H5I_INVALID_HID;
@@ -3114,9 +3092,9 @@ test_async_link(void *params)
     TESTING("link operations");
 
     /* Make sure the connector supports the API functions being tested */
-    if (!(vol_cap_flags_g & H5VL_CAP_FLAG_ASYNC) || !(vol_cap_flags_g & H5VL_CAP_FLAG_FILE_BASIC) ||
-        !(vol_cap_flags_g & H5VL_CAP_FLAG_LINK_BASIC) || !(vol_cap_flags_g & H5VL_CAP_FLAG_HARD_LINKS) ||
-        !(vol_cap_flags_g & H5VL_CAP_FLAG_SOFT_LINKS) || !(vol_cap_flags_g & H5VL_CAP_FLAG_FLUSH_REFRESH) ||
+    if (!(vol_cap_flags_g & H5VL_CAP_FLAG_FILE_BASIC) || !(vol_cap_flags_g & H5VL_CAP_FLAG_LINK_BASIC) ||
+        !(vol_cap_flags_g & H5VL_CAP_FLAG_HARD_LINKS) || !(vol_cap_flags_g & H5VL_CAP_FLAG_SOFT_LINKS) ||
+        !(vol_cap_flags_g & H5VL_CAP_FLAG_FLUSH_REFRESH) ||
         !(vol_cap_flags_g & H5VL_CAP_FLAG_CREATION_ORDER)) {
         if (MAINPROCESS) {
             SKIPPED();
@@ -3124,10 +3102,10 @@ test_async_link(void *params)
                    "aren't supported with this connector\n");
         }
 
-        return;
+        return 0;
     }
 
-    if ((fapl_id = create_mpi_fapl(MPI_COMM_WORLD, MPI_INFO_NULL, *(const bool *)params)) < 0)
+    if ((fapl_id = create_mpi_fapl(MPI_COMM_WORLD, MPI_INFO_NULL, coll_metadata_read)) < 0)
         TEST_ERROR;
 
     /* Create GCPL */
@@ -3331,7 +3309,7 @@ test_async_link(void *params)
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -3346,15 +3324,15 @@ error:
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 
 /*
  * Tests H5Ocopy_async and H5Orefresh_async in parallel
  */
 #define OCOPY_REFRESH_TEST_SPACE_RANK 2
-static void
-test_async_ocopy_orefresh(void *params)
+static int
+test_ocopy_orefresh(void)
 {
     hsize_t *dims            = NULL;
     hid_t    file_id         = H5I_INVALID_HID;
@@ -3364,26 +3342,23 @@ test_async_ocopy_orefresh(void *params)
     hid_t    space_id        = H5I_INVALID_HID;
     hid_t    es_id           = H5I_INVALID_HID;
     size_t   num_in_progress;
-    bool     coll_metadata_read = false;
-    bool     op_failed          = false;
-    bool     is_native_vol      = false;
+    bool     op_failed     = false;
+    bool     is_native_vol = false;
 
     TESTING("H5Ocopy() and H5Orefresh()");
 
     /* Make sure the connector supports the API functions being tested */
-    if (!(vol_cap_flags_g & H5VL_CAP_FLAG_ASYNC) || !(vol_cap_flags_g & H5VL_CAP_FLAG_FILE_BASIC) ||
-        !(vol_cap_flags_g & H5VL_CAP_FLAG_GROUP_BASIC) || !(vol_cap_flags_g & H5VL_CAP_FLAG_DATASET_BASIC) ||
-        !(vol_cap_flags_g & H5VL_CAP_FLAG_OBJECT_MORE) || !(vol_cap_flags_g & H5VL_CAP_FLAG_FLUSH_REFRESH)) {
+    if (!(vol_cap_flags_g & H5VL_CAP_FLAG_FILE_BASIC) || !(vol_cap_flags_g & H5VL_CAP_FLAG_GROUP_BASIC) ||
+        !(vol_cap_flags_g & H5VL_CAP_FLAG_DATASET_BASIC) || !(vol_cap_flags_g & H5VL_CAP_FLAG_OBJECT_MORE) ||
+        !(vol_cap_flags_g & H5VL_CAP_FLAG_FLUSH_REFRESH)) {
         if (MAINPROCESS) {
             SKIPPED();
             printf("    API functions for basic file, group, dataset, object more, flush, or refresh "
                    "aren't supported with this connector\n");
         }
 
-        return;
+        return 0;
     }
-
-    coll_metadata_read = *(const bool *)params;
 
     if ((fapl_id = create_mpi_fapl(MPI_COMM_WORLD, MPI_INFO_NULL, coll_metadata_read)) < 0)
         TEST_ERROR;
@@ -3493,7 +3468,7 @@ test_async_ocopy_orefresh(void *params)
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -3510,15 +3485,15 @@ error:
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 #undef OCOPY_REFRESH_TEST_SPACE_RANK
 
 /*
  * Tests H5Freopen_async in parallel
  */
-static void
-test_async_file_reopen(void *params)
+static int
+test_file_reopen(void)
 {
     hid_t  file_id          = H5I_INVALID_HID;
     hid_t  fapl_id          = H5I_INVALID_HID;
@@ -3530,17 +3505,16 @@ test_async_file_reopen(void *params)
     TESTING("H5Freopen()");
 
     /* Make sure the connector supports the API functions being tested */
-    if (!(vol_cap_flags_g & H5VL_CAP_FLAG_ASYNC) || !(vol_cap_flags_g & H5VL_CAP_FLAG_FILE_BASIC) ||
-        !(vol_cap_flags_g & H5VL_CAP_FLAG_FILE_MORE)) {
+    if (!(vol_cap_flags_g & H5VL_CAP_FLAG_FILE_BASIC) || !(vol_cap_flags_g & H5VL_CAP_FLAG_FILE_MORE)) {
         if (MAINPROCESS) {
             SKIPPED();
             printf("    API functions for basic file or file more aren't supported with this connector\n");
         }
 
-        return;
+        return 0;
     }
 
-    if ((fapl_id = create_mpi_fapl(MPI_COMM_WORLD, MPI_INFO_NULL, *(const bool *)params)) < 0)
+    if ((fapl_id = create_mpi_fapl(MPI_COMM_WORLD, MPI_INFO_NULL, coll_metadata_read)) < 0)
         TEST_ERROR;
 
     /* Create event stack */
@@ -3580,7 +3554,7 @@ test_async_file_reopen(void *params)
 
     PASSED();
 
-    return;
+    return 0;
 
 error:
     H5E_BEGIN_TRY
@@ -3593,126 +3567,107 @@ error:
     }
     H5E_END_TRY
 
-    return;
+    return 1;
 }
 
 /*
  * Cleanup temporary test files
  */
 static void
-test_async_file_cleanup(void H5_ATTR_UNUSED *params)
+cleanup_files(void)
 {
     char file_name[64];
     int  i;
 
     if (MAINPROCESS) {
-        remove_test_file(NULL, PAR_ASYNC_API_TEST_FILE);
-
+        H5Fdelete(PAR_ASYNC_API_TEST_FILE, H5P_DEFAULT);
         for (i = 0; i <= max_printf_file; i++) {
             snprintf(file_name, sizeof(file_name), PAR_ASYNC_API_TEST_FILE_PRINTF, i);
-            remove_test_file(NULL, file_name);
-        }
+            H5Fdelete(file_name, H5P_DEFAULT);
+        } /* end for */
     }
 }
 
-void
-H5_api_async_test_parallel_add(void)
+int
+H5_api_async_test_parallel(void)
 {
-    bool coll_metadata_read = true;
+    size_t i;
+    int    nerrors;
 
-    /* Add a fake test to print out a header to distinguish different test interfaces */
-    AddTest("print_async_test_header (coll)", print_async_test_header, NULL, NULL, &coll_metadata_read,
-            sizeof(coll_metadata_read), "Prints header for async tests");
+    if (MAINPROCESS) {
+        printf("**********************************************\n");
+        printf("*                                            *\n");
+        printf("*      API Parallel Async Tests              *\n");
+        printf("*                                            *\n");
+        printf("**********************************************\n\n");
+    }
 
-    /* Add tests using collective metadata reads */
-    AddTest("test_async_one_dataset_io (coll)", test_async_one_dataset_io, NULL, NULL, &coll_metadata_read,
-            sizeof(coll_metadata_read), "async single dataset I/O (collective metadata reads)");
-    AddTest("test_async_multi_dataset_io (coll)", test_async_multi_dataset_io, NULL, NULL,
-            &coll_metadata_read, sizeof(coll_metadata_read),
-            "async multi dataset I/O (collective metadata reads)");
-    AddTest("test_async_multi_file_dataset_io (coll)", test_async_multi_file_dataset_io, NULL, NULL,
-            &coll_metadata_read, sizeof(coll_metadata_read),
-            "async multi file dataset I/O (collective metadata reads)");
-    AddTest("test_async_multi_file_grp_dset_io (coll)", test_async_multi_file_grp_dset_io, NULL, NULL,
-            &coll_metadata_read, sizeof(coll_metadata_read),
-            "async multi file dataset I/O with groups (collective metadata reads)");
-    AddTest("test_async_set_extent (coll)", test_async_set_extent, NULL, NULL, &coll_metadata_read,
-            sizeof(coll_metadata_read), "async extending dataset (collective metadata reads)");
-    AddTest("test_async_attribute_exists (coll)", test_async_attribute_exists, NULL, NULL,
-            &coll_metadata_read, sizeof(coll_metadata_read), "async H5Aexists() (collective metadata reads)");
-    AddTest("test_async_attribute_io (coll)", test_async_attribute_io, NULL, NULL, &coll_metadata_read,
-            sizeof(coll_metadata_read), "async attribute I/O (collective metadata reads)");
-    AddTest("test_async_attribute_io_tconv (coll)", test_async_attribute_io_tconv, NULL, NULL,
-            &coll_metadata_read, sizeof(coll_metadata_read),
-            "async attribute I/O with type conversion (collective metadata reads)");
-    AddTest("test_async_attribute_io_compound (coll)", test_async_attribute_io_compound, NULL, NULL,
-            &coll_metadata_read, sizeof(coll_metadata_read),
-            "async attribute I/O with compound type conversion (collective metadata reads)");
-    AddTest("test_async_group (coll)", test_async_group, NULL, NULL, &coll_metadata_read,
-            sizeof(coll_metadata_read), "async group operations (collective metadata reads)");
-    AddTest("test_async_link (coll)", test_async_link, NULL, NULL, &coll_metadata_read,
-            sizeof(coll_metadata_read), "async link operations (collective metadata reads)");
-    AddTest("test_async_ocopy_orefresh (coll)", test_async_ocopy_orefresh, NULL, NULL, &coll_metadata_read,
-            sizeof(coll_metadata_read), "async H5Ocopy() and H5Orefresh() (collective metadata reads)");
-    AddTest("test_async_file_reopen (coll)", test_async_file_reopen, NULL, NULL, &coll_metadata_read,
-            sizeof(coll_metadata_read), "async H5Freopen() (collective metadata reads)");
+    if (!(vol_cap_flags_g & H5VL_CAP_FLAG_ASYNC)) {
+        if (MAINPROCESS) {
+            SKIPPED();
+            printf("    Async APIs aren't supported with this connector\n");
+        }
 
-    /* Add a fake test to cleanup test files due to current test interdependencies */
-    AddTest("test_async_file_cleanup (coll)", test_async_file_cleanup, NULL, NULL, NULL, 0,
-            "cleanup async test files");
+        return 0;
+    }
 
-    /* Re-run tests with independent metadata reads */
+    for (i = 0, nerrors = 0; i < ARRAY_LENGTH(par_async_tests); i++) {
+        nerrors += (*par_async_tests[i])() ? 1 : 0;
+
+        if (MPI_SUCCESS != MPI_Barrier(MPI_COMM_WORLD)) {
+            if (MAINPROCESS)
+                printf("    MPI_Barrier() failed!\n");
+        }
+    }
+
+    if (MAINPROCESS) {
+        printf("\n");
+        printf("Cleaning up testing files\n");
+    }
+
+    cleanup_files();
+
+    if (MAINPROCESS) {
+        printf("\n * Re-testing with independent metadata reads *\n");
+    }
+
     coll_metadata_read = false;
 
-    /* Add a fake test to print out that tests are being re-run with independent metadata reads */
-    AddTest("print_async_test_header (ind)", print_async_test_header, NULL, NULL, &coll_metadata_read,
-            sizeof(coll_metadata_read), "Prints header for async tests");
+    for (i = 0, nerrors = 0; i < ARRAY_LENGTH(par_async_tests); i++) {
+        nerrors += (*par_async_tests[i])() ? 1 : 0;
 
-    /* Add tests using independent metadata reads */
-    AddTest("test_async_one_dataset_io (ind)", test_async_one_dataset_io, NULL, NULL, &coll_metadata_read,
-            sizeof(coll_metadata_read), "async single dataset I/O (independent metadata reads)");
-    AddTest("test_async_multi_dataset_io (ind)", test_async_multi_dataset_io, NULL, NULL, &coll_metadata_read,
-            sizeof(coll_metadata_read), "async multi dataset I/O (independent metadata reads)");
-    AddTest("test_async_multi_file_dataset_io (ind)", test_async_multi_file_dataset_io, NULL, NULL,
-            &coll_metadata_read, sizeof(coll_metadata_read),
-            "async multi file dataset I/O (independent metadata reads)");
-    AddTest("test_async_multi_file_grp_dset_io (ind)", test_async_multi_file_grp_dset_io, NULL, NULL,
-            &coll_metadata_read, sizeof(coll_metadata_read),
-            "async multi file dataset I/O with groups (independent metadata reads)");
-    AddTest("test_async_set_extent (ind)", test_async_set_extent, NULL, NULL, &coll_metadata_read,
-            sizeof(coll_metadata_read), "async extending dataset (independent metadata reads)");
-    AddTest("test_async_attribute_exists (ind)", test_async_attribute_exists, NULL, NULL, &coll_metadata_read,
-            sizeof(coll_metadata_read), "async H5Aexists() (independent metadata reads)");
-    AddTest("test_async_attribute_io (ind)", test_async_attribute_io, NULL, NULL, &coll_metadata_read,
-            sizeof(coll_metadata_read), "async attribute I/O (independent metadata reads)");
-    AddTest("test_async_attribute_io_tconv (ind)", test_async_attribute_io_tconv, NULL, NULL,
-            &coll_metadata_read, sizeof(coll_metadata_read),
-            "async attribute I/O with type conversion (independent metadata reads)");
-    AddTest("test_async_attribute_io_compound (ind)", test_async_attribute_io_compound, NULL, NULL,
-            &coll_metadata_read, sizeof(coll_metadata_read),
-            "async attribute I/O with compound type conversion (independent metadata reads)");
-    AddTest("test_async_group (ind)", test_async_group, NULL, NULL, &coll_metadata_read,
-            sizeof(coll_metadata_read), "async group operations (independent metadata reads)");
-    AddTest("test_async_link (ind)", test_async_link, NULL, NULL, &coll_metadata_read,
-            sizeof(coll_metadata_read), "async link operations (independent metadata reads)");
-    AddTest("test_async_ocopy_orefresh (ind)", test_async_ocopy_orefresh, NULL, NULL, &coll_metadata_read,
-            sizeof(coll_metadata_read), "async H5Ocopy() and H5Orefresh() (independent metadata reads)");
-    AddTest("test_async_file_reopen (ind)", test_async_file_reopen, NULL, NULL, &coll_metadata_read,
-            sizeof(coll_metadata_read), "async H5Freopen() (independent metadata reads)");
+        if (MPI_SUCCESS != MPI_Barrier(MPI_COMM_WORLD)) {
+            if (MAINPROCESS)
+                printf("    MPI_Barrier() failed!\n");
+        }
+    }
 
-    /* Add a fake test to cleanup test files due to current test interdependencies */
-    AddTest("test_async_file_cleanup (ind)", test_async_file_cleanup, NULL, NULL, NULL, 0,
-            "cleanup async test files");
+    if (MAINPROCESS) {
+        printf("\n");
+        printf("Cleaning up testing files\n");
+    }
+
+    cleanup_files();
+
+    return nerrors;
 }
 
-#else /* H5_API_TEST_HAVE_ASYNC */
+#else /* H5ESpublic_H */
 
-void
-H5_api_async_test_parallel_add(void)
+int
+H5_api_async_test_parallel(void)
 {
-    /* Add a fake test to print out a header to distinguish different test interfaces */
-    AddTest("print_async_test_header", print_async_test_header, NULL, NULL, NULL, 0,
-            "Prints header for async tests");
+    if (MAINPROCESS) {
+        printf("**********************************************\n");
+        printf("*                                            *\n");
+        printf("*      API Parallel Async Tests              *\n");
+        printf("*                                            *\n");
+        printf("**********************************************\n\n");
+    }
+
+    printf("SKIPPED due to no async support in HDF5 library\n");
+
+    return 0;
 }
 
 #endif

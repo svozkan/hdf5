@@ -4,7 +4,7 @@
  *                                                                           *
  * This file is part of HDF5.  The full HDF5 copyright notice, including     *
  * terms governing use, modification, and redistribution, is contained in    *
- * the LICENSE file, which can be found at the root of the source code       *
+ * the COPYING file, which can be found at the root of the source code       *
  * distribution tree, or in https://www.hdfgroup.org/licenses.               *
  * If you do not have access to either file, you may request a copy from     *
  * help@hdfgroup.org.                                                        *
@@ -632,7 +632,7 @@ test_attr_compound_write(FileAccPropList &fapl)
         hsize_t   dims2[] = {ATTR4_DIM1, ATTR4_DIM2};
         DataSpace sid2(ATTR4_RANK, dims2);
 
-        // Create compound attribute for the dataset
+        // Create complex attribute for the dataset
         Attribute attr = dataset.createAttribute(ATTR4_NAME, comp_type, sid2);
 
         // Try to create the same attribute again (should fail)
@@ -643,7 +643,7 @@ test_attr_compound_write(FileAccPropList &fapl)
         {
         } // do nothing, exception expected
 
-        // Write compound attribute data
+        // Write complex attribute data
         attr.write(comp_type, attr_data4);
 
         PASSED();
@@ -1956,10 +1956,8 @@ test_attr_corder_create_basic(FileCreatPropList &fcpl, FileAccPropList &fapl)
  *-------------------------------------------------------------------------
  */
 extern "C" void
-test_attr(void *params)
+test_attr()
 {
-    (void)params;
-
     // Output message about test being performed
     MESSAGE(5, ("Testing Attributes\n"));
 
@@ -1985,7 +1983,7 @@ test_attr(void *params)
 
         // Loop over using new group format
         unsigned new_format;
-        for (new_format = false; new_format <= true; new_format++) {
+        for (new_format = FALSE; new_format <= TRUE; new_format++) {
             FileAccPropList curr_fapl;
 
             // Set the file access proplist for the type of format
@@ -2003,8 +2001,8 @@ test_attr(void *params)
             test_attr_rename(curr_fapl);      // Test renaming attribute
             test_attr_basic_read(curr_fapl);  // Test basic H5A reading code
 
-            test_attr_compound_write(curr_fapl); // Test compound datatype H5A writing code
-            test_attr_compound_read(curr_fapl);  // Test compound datatype H5A reading code
+            test_attr_compound_write(curr_fapl); // Test complex datatype H5A writing code
+            test_attr_compound_read(curr_fapl);  // Test complex datatype H5A reading code
 
             test_attr_scalar_write(curr_fapl); // Test scalar dataspace H5A writing code
             test_attr_scalar_read(curr_fapl);  // Test scalar dataspace H5A reading code
@@ -2043,16 +2041,12 @@ test_attr(void *params)
  *-------------------------------------------------------------------------
  */
 extern "C" void
-cleanup_attr(void *params)
+cleanup_attr()
 {
-    (void)params;
-
-    if (GetTestCleanup()) {
-        HDremove(FILE_BASIC.c_str());
-        HDremove(FILE_COMPOUND.c_str());
-        HDremove(FILE_SCALAR.c_str());
-        HDremove(FILE_MULTI.c_str());
-        HDremove(FILE_DTYPE.c_str());
-        HDremove(FILE_CRTPROPS.c_str());
-    }
+    HDremove(FILE_BASIC.c_str());
+    HDremove(FILE_COMPOUND.c_str());
+    HDremove(FILE_SCALAR.c_str());
+    HDremove(FILE_MULTI.c_str());
+    HDremove(FILE_DTYPE.c_str());
+    HDremove(FILE_CRTPROPS.c_str());
 }

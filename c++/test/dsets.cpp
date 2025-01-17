@@ -4,7 +4,7 @@
  *                                                                           *
  * This file is part of HDF5.  The full HDF5 copyright notice, including     *
  * terms governing use, modification, and redistribution, is contained in    *
- * the LICENSE file, which can be found at the root of the source code       *
+ * the COPYING file, which can be found at the root of the source code       *
  * distribution tree, or in https://www.hdfgroup.org/licenses.               *
  * If you do not have access to either file, you may request a copy from     *
  * help@hdfgroup.org.                                                        *
@@ -1451,13 +1451,11 @@ test_read_string(H5File &file)
  *-------------------------------------------------------------------------
  */
 extern "C" void
-test_dset(void *params)
+test_dset()
 {
     hid_t fapl_id;
     fapl_id     = h5_fileaccess(); // in h5test.c, returns a file access template
     int nerrors = 0;               // keep track of number of failures occur
-
-    (void)params;
 
     try {
         // Use the file access template id to create a file access prop.
@@ -1494,6 +1492,9 @@ test_dset(void *params)
     catch (Exception &E) {
         test_report(nerrors, H5std_string(" Dataset"));
     }
+
+    // Clean up data file
+    cleanup_dsets();
 } // test_dset
 
 /*-------------------------------------------------------------------------
@@ -1505,12 +1506,8 @@ test_dset(void *params)
  *-------------------------------------------------------------------------
  */
 extern "C" void
-cleanup_dsets(void *params)
+cleanup_dsets()
 {
-    (void)params;
-
-    if (GetTestCleanup()) {
-        HDremove(FILE1.c_str());
-        HDremove(FILE_ACCPLIST.c_str());
-    }
+    HDremove(FILE1.c_str());
+    HDremove(FILE_ACCPLIST.c_str());
 } // cleanup_dsets

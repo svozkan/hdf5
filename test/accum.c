@@ -4,7 +4,7 @@
  *                                                                           *
  * This file is part of HDF5.  The full HDF5 copyright notice, including     *
  * terms governing use, modification, and redistribution, is contained in    *
- * the LICENSE file, which can be found at the root of the source code       *
+ * the COPYING file, which can be found at the root of the source code       *
  * distribution tree, or in https://www.hdfgroup.org/licenses.               *
  * If you do not have access to either file, you may request a copy from     *
  * help@hdfgroup.org.                                                        *
@@ -80,13 +80,12 @@ void accum_printf(const H5F_t *f);
 int
 main(void)
 {
-    unsigned    nerrors        = 0;           /* track errors */
-    H5CX_node_t api_ctx        = {{0}, NULL}; /* API context node to push */
-    bool        api_ctx_pushed = false;       /* Whether API context pushed */
-    hid_t       fid            = H5I_INVALID_HID;
-    hid_t       fapl           = H5I_INVALID_HID; /* File access property list */
-    char        filename[1024];
-    H5F_t      *f = NULL; /* File for all tests */
+    unsigned nerrors        = 0;     /* track errors */
+    bool     api_ctx_pushed = false; /* Whether API context pushed */
+    hid_t    fid            = H5I_INVALID_HID;
+    hid_t    fapl           = H5I_INVALID_HID; /* File access property list */
+    char     filename[1024];
+    H5F_t   *f = NULL; /* File for all tests */
 
     /* Test Setup */
     puts("Testing the metadata accumulator");
@@ -102,7 +101,7 @@ main(void)
         FAIL_STACK_ERROR;
 
     /* Push API context */
-    if (H5CX_push(&api_ctx) < 0)
+    if (H5CX_push() < 0)
         FAIL_STACK_ERROR;
     api_ctx_pushed = true;
 
@@ -1926,7 +1925,7 @@ test_random_write(H5F_t *f)
 /* seed = (unsigned)1155438845; */
 fprintf(stderr, "Random # seed was: %u\n", seed);
 #endif
-    srand(seed);
+    HDsrandom(seed);
 
     /* Allocate space for the segment length buffer */
     off = (size_t *)malloc(MAX_RANDOM_SEGMENTS * sizeof(size_t));
@@ -1941,8 +1940,8 @@ fprintf(stderr, "Random # seed was: %u\n", seed);
 
         /* Choose random length of segment, allowing for variance */
         do {
-            length += (size_t)(rand() % RAND_SEG_LEN) + 1;
-        } while ((rand() & 256) >= 128); /* end while */
+            length += (size_t)(HDrandom() % RAND_SEG_LEN) + 1;
+        } while ((HDrandom() & 256) >= 128); /* end while */
 
         /* Check for going off end of buffer */
         if ((cur_off + length) > RANDOM_BUF_SIZE)
@@ -1973,7 +1972,7 @@ fprintf(stderr, "Random # seed was: %u\n", seed);
         size_t tmp; /* Temporary holder for offset & length values */
 
         /* Choose value within next few elements to to swap with */
-        swap = ((size_t)rand() % 8) + u;
+        swap = ((size_t)HDrandom() % 8) + u;
         if (swap >= nsegments)
             swap = nsegments - 1;
 
@@ -2059,8 +2058,7 @@ test_swmr_write_big(bool newest_format)
     uint8_t     wbuf[1024];                 /* Buffer for reading & writing */
     unsigned    u;                          /* Local index variable */
     bool        process_success = false;
-    H5CX_node_t api_ctx         = {{0}, NULL}; /* API context node to push */
-    bool        api_ctx_pushed  = false;       /* Whether API context pushed */
+    bool        api_ctx_pushed  = false; /* Whether API context pushed */
 
     if (newest_format)
         TESTING("SWMR write of large metadata: with latest format");
@@ -2112,7 +2110,7 @@ test_swmr_write_big(bool newest_format)
         FAIL_STACK_ERROR;
 
     /* Push API context */
-    if (H5CX_push(&api_ctx) < 0)
+    if (H5CX_push() < 0)
         FAIL_STACK_ERROR;
     api_ctx_pushed = true;
 

@@ -1,15 +1,16 @@
-HDF5 version 2.0.0 currently under development
+HDF5 version 1.14.5 released on 2024-09-30
 
 Features included for the next major release:
 ----------------------------------------------------------------------------
 
-      ************ Renamed the option: HDF5_ENABLE_Z_LIB_SUPPORT ************
+* The release process now provides signed Windows and Mac installation binaries 
+  in addition to the Debian and rpm installation binaries. The Mac binaries are 
+  built as universal binaries on an ARM-based Mac.
 
-      The option has been renamed to HDF5_ENABLE_ZLIB_SUPPORT to be consistent
-      with the naming of other options.
-      *** Also, the option defaults to OFF. This requires the user to explicitly ***
-      *** enable zlib support when configuring the library. ***
-
+* Added new routines for interacting with error stacks: H5Epause_stack, 
+  H5Eresume_stack, and H5Eis_paused.  These routines can be used to indicate 
+  that errors from a call to an HDF5 routine should not be pushed on to an error 
+  stack.
 
 ----------------------------------------------------------------------------
 Please see the full release notes for detailed information regarding this release,

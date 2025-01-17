@@ -4,7 +4,7 @@
  *                                                                           *
  * This file is part of HDF5.  The full HDF5 copyright notice, including     *
  * terms governing use, modification, and redistribution, is contained in    *
- * the LICENSE file, which can be found at the root of the source code       *
+ * the COPYING file, which can be found at the root of the source code       *
  * distribution tree, or in https://www.hdfgroup.org/licenses.               *
  * If you do not have access to either file, you may request a copy from     *
  * help@hdfgroup.org.                                                        *
@@ -235,13 +235,11 @@ const H5S_select_class_t H5S_sel_hyper[1] = {{
 }};
 
 /* Format version bounds for dataspace hyperslab selection */
-static const unsigned H5O_sds_hyper_ver_bounds[] = {
+const unsigned H5O_sds_hyper_ver_bounds[] = {
     H5S_HYPER_VERSION_1, /* H5F_LIBVER_EARLIEST */
     H5S_HYPER_VERSION_1, /* H5F_LIBVER_V18 */
     H5S_HYPER_VERSION_2, /* H5F_LIBVER_V110 */
     H5S_HYPER_VERSION_3, /* H5F_LIBVER_V112 */
-    H5S_HYPER_VERSION_3, /* H5F_LIBVER_V114 */
-    H5S_HYPER_VERSION_3, /* H5F_LIBVER_V200 */
     H5S_HYPER_VERSION_3  /* H5F_LIBVER_LATEST */
 };
 
@@ -268,7 +266,7 @@ static const H5S_sel_iter_class_t H5S_sel_iter_hyper[1] = {{
 static const hsize_t H5S_hyper_zeros_g[H5S_MAX_RANK] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                                                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 static const hsize_t H5S_hyper_ones_g[H5S_MAX_RANK]  = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                                                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+                                                       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
 
 /* Declare a free list to manage the H5S_hyper_sel_t struct */
 H5FL_DEFINE_STATIC(H5S_hyper_sel_t);
@@ -3724,10 +3722,10 @@ done:
 static hssize_t
 H5S__hyper_serial_size(H5S_t *space)
 {
-    hsize_t  block_count = 0;        /* block counter for regular hyperslabs */
-    uint32_t version     = UINT_MAX; /* Version number */
-    uint8_t  enc_size;               /* Encoded size of hyperslab selection info */
-    hssize_t ret_value = -1;         /* return value */
+    hsize_t  block_count = 0; /* block counter for regular hyperslabs */
+    uint32_t version;         /* Version number */
+    uint8_t  enc_size;        /* Encoded size of hyperslab selection info */
+    hssize_t ret_value = -1;  /* return value */
 
     FUNC_ENTER_PACKAGE
 
@@ -12099,7 +12097,7 @@ H5S_hyper_get_clip_extent(const H5S_t *clip_space, const H5S_t *match_space, boo
     hsize_t num_slices;    /* Number of slices in unlimited dimension */
     hsize_t ret_value = 0; /* Return value */
 
-    FUNC_ENTER_NOAPI(0)
+    FUNC_ENTER_NOAPI_NOERR
 
     /* Check parameters */
     assert(clip_space);
@@ -12121,7 +12119,6 @@ H5S_hyper_get_clip_extent(const H5S_t *clip_space, const H5S_t *match_space, boo
     /* Call "real" get_clip_extent function */
     ret_value = H5S__hyper_get_clip_extent_real(clip_space, num_slices, incl_trail);
 
-done:
     FUNC_LEAVE_NOAPI(ret_value)
 } /* end H5S_hyper_get_clip_extent() */
 
@@ -12157,7 +12154,7 @@ H5S_hyper_get_clip_extent_match(const H5S_t *clip_space, const H5S_t *match_spac
     hsize_t num_slices; /* Number of slices in unlimited dimension */
     hsize_t ret_value = 0; /* Return value */
 
-    FUNC_ENTER_NOAPI(0)
+    FUNC_ENTER_NOAPI_NOERR
 
     /* Check parameters */
     assert(clip_space);
@@ -12203,7 +12200,6 @@ H5S_hyper_get_clip_extent_match(const H5S_t *clip_space, const H5S_t *match_spac
     /* Call "real" get_clip_extent function */
     ret_value = H5S__hyper_get_clip_extent_real(clip_space, num_slices, incl_trail);
 
-done:
     FUNC_LEAVE_NOAPI(ret_value)
 } /* end H5S_hyper_get_clip_extent_match() */
 
@@ -12319,7 +12315,7 @@ H5S_hyper_get_first_inc_block(const H5S_t *space, hsize_t clip_size, bool *parti
     H5S_hyper_dim_t *diminfo; /* Convenience pointer to diminfo in unlimited dimension */
     hsize_t          ret_value = 0;
 
-    FUNC_ENTER_NOAPI(0)
+    FUNC_ENTER_NOAPI_NOERR
 
     /* Check parameters */
     assert(space);
@@ -12349,7 +12345,6 @@ H5S_hyper_get_first_inc_block(const H5S_t *space, hsize_t clip_size, bool *parti
         } /* end if */
     }     /* end else */
 
-done:
     FUNC_LEAVE_NOAPI(ret_value)
 } /* end H5S_hyper_get_first_inc_block */
 

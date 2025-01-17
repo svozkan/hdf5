@@ -4,7 +4,7 @@
  *                                                                           *
  * This file is part of HDF5.  The full HDF5 copyright notice, including     *
  * terms governing use, modification, and redistribution, is contained in    *
- * the LICENSE file, which can be found at the root of the source code       *
+ * the COPYING file, which can be found at the root of the source code       *
  * distribution tree, or in https://www.hdfgroup.org/licenses.               *
  * If you do not have access to either file, you may request a copy from     *
  * help@hdfgroup.org.                                                        *
@@ -24,12 +24,8 @@
 #include "h5tools_utils.h"
 
 #ifdef H5_HAVE_FILTER_DEFLATE
-#if defined(H5_HAVE_ZLIB_H) && !defined(H5_ZLIB_HEADER)
-#define H5_ZLIB_HEADER "zlib.h"
-#endif
-#if defined(H5_ZLIB_HEADER)
-#include H5_ZLIB_HEADER /* "zlib.h" */
-#endif
+
+#include <zlib.h>
 
 #define ONE_KB 1024
 #define ONE_MB (ONE_KB * ONE_KB)
@@ -167,11 +163,7 @@ write_file(Bytef *source, uLongf sourceLen)
 static void
 compress_buffer(Bytef *dest, uLongf *destLen, const Bytef *source, uLong sourceLen)
 {
-#if defined(H5_HAVE_ZLIBNG_H)
-    int rc = zng_compress2(dest, destLen, source, sourceLen, compress_level);
-#else
     int rc = compress2(dest, destLen, source, sourceLen, compress_level);
-#endif
 
     if (rc != Z_OK) {
         /* compress2 failed - cleanup and tell why */
@@ -345,7 +337,7 @@ fill_with_random_data(Bytef *src, uLongf src_len)
         fprintf(stdout, "Using random() for random data\n");
 
         for (u = 0; u < src_len; ++u)
-            src[u] = (Bytef)(0xff & rand());
+            src[u] = (Bytef)(0xff & HDrandom());
     }
 
     if (compress_percent) {

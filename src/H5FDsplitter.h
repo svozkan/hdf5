@@ -4,7 +4,7 @@
  *                                                                           *
  * This file is part of HDF5.  The full HDF5 copyright notice, including     *
  * terms governing use, modification, and redistribution, is contained in    *
- * the LICENSE file, which can be found at the root of the source code       *
+ * the COPYING file, which can be found at the root of the source code       *
  * distribution tree, or in https://www.hdfgroup.org/licenses.               *
  * If you do not have access to either file, you may request a copy from     *
  * help@hdfgroup.org.                                                        *
@@ -17,11 +17,8 @@
 #ifndef H5FDsplitter_H
 #define H5FDsplitter_H
 
-/* Public header files */
-#include "H5FDpublic.h" /* File drivers             */
-
-/** ID for the splitter VFD */
-#define H5FD_SPLITTER (H5OPEN H5FD_SPLITTER_id_g)
+/** Initializer for the splitter VFD */
+#define H5FD_SPLITTER (H5FDperform_init(H5FD_splitter_init))
 
 /** Identifier for the splitter VFD */
 #define H5FD_SPLITTER_VALUE H5_VFD_SPLITTER
@@ -31,11 +28,11 @@
 
 /**
  * Maximum length of a filename/path string in the Write-Only channel,
- * including the NULL-terminator. \since 1.10.7
+ * including the NULL-terminator.
  */
 #define H5FD_SPLITTER_PATH_MAX 4096
 
-/** Semi-unique constant used to help identify structure pointers \since 1.10.7 */
+/** Semi-unique constant used to help identify structure pointers */
 #define H5FD_SPLITTER_MAGIC 0x2B916880
 
 //! <!-- [H5FD_splitter_vfd_config_t_snip] -->
@@ -64,9 +61,9 @@ extern "C" {
 
 /** @private
  *
- * \brief ID for the splitter VFD
+ * \brief Private initializer for the splitter VFD
  */
-H5_DLLVAR hid_t H5FD_SPLITTER_id_g;
+H5_DLL hid_t H5FD_splitter_init(void);
 
 /**
  * \ingroup FAPL

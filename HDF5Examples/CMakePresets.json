@@ -15,13 +15,6 @@
       }
     },
     {
-      "name": "ci-StdHL",
-      "hidden": true,
-      "cacheVariables": {
-        "H5EX_BUILD_HL": "ON"
-      }
-    },
-    {
       "name": "ci-StdJava",
       "hidden": true,
       "cacheVariables": {

@@ -4,7 +4,7 @@
  *                                                                           *
  * This file is part of HDF5.  The full HDF5 copyright notice, including     *
  * terms governing use, modification, and redistribution, is contained in    *
- * the LICENSE file, which can be found at the root of the source code       *
+ * the COPYING file, which can be found at the root of the source code       *
  * distribution tree, or in https://www.hdfgroup.org/licenses.               *
  * If you do not have access to either file, you may request a copy from     *
  * help@hdfgroup.org.                                                        *
@@ -227,10 +227,8 @@ test_szip_filter(H5File &file1)
  */
 const H5std_string FILE1("tfilters.h5");
 extern "C" void
-test_filters(void *params)
+test_filters()
 {
-    (void)params;
-
     // Output message about test being performed
     MESSAGE(5, ("Testing Various Filters\n"));
 
@@ -261,11 +259,7 @@ test_filters(void *params)
  *-------------------------------------------------------------------------
  */
 extern "C" void
-cleanup_filters(void *params)
+cleanup_filters()
 {
-    (void)params;
-
-    if (GetTestCleanup()) {
-        HDremove(FILE1.c_str());
-    }
+    HDremove(FILE1.c_str());
 }

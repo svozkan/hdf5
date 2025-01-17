@@ -4,7 +4,7 @@
 #
 # This file is part of HDF5.  The full HDF5 copyright notice, including
 # terms governing use, modification, and redistribution, is contained in
-# the LICENSE file, which can be found at the root of the source code
+# the COPYING file, which can be found at the root of the source code
 # distribution tree, or in https://www.hdfgroup.org/licenses.
 # If you do not have access to either file, you may request a copy from
 # help@hdfgroup.org.
@@ -21,13 +21,17 @@ include (CheckTypeSize)
 include (CheckVariableExists)
 include (TestBigEndian)
 include (CheckStructHasMember)
-include (CMakePushCheckState)
 
 set (HDF_PREFIX "H5")
 
 # Check for Darwin (not just Apple - we also want to catch OpenDarwin)
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     set (${HDF_PREFIX}_HAVE_DARWIN 1)
+endif ()
+
+# Check for Solaris
+if (${CMAKE_SYSTEM_NAME} MATCHES "SunOS")
+    set (${HDF_PREFIX}_HAVE_SOLARIS 1)
 endif ()
 
 #-----------------------------------------------------------------------------
@@ -63,8 +67,6 @@ if (WIN32 AND NOT MINGW)
       set (${HDF_PREFIX}_HAVE_VISUAL_STUDIO 1)
     endif ()
   endif ()
-  message (TRACE "MSVC=${MSVC}")
-  message (TRACE "HAVE_VISUAL_STUDIO=${${HDF_PREFIX}_HAVE_VISUAL_STUDIO}")
 endif ()
 
 if (WINDOWS)
@@ -77,12 +79,13 @@ if (WINDOWS)
   endif ()
   if (NOT UNIX AND NOT CYGWIN)
     set (${HDF_PREFIX}_HAVE_GETCONSOLESCREENBUFFERINFO 1)
-    set (${HDF_PREFIX}_HAVE_TIMEZONE 1)
+    if (MSVC_VERSION GREATER_EQUAL 1900)
+      set (${HDF_PREFIX}_HAVE_TIMEZONE 1)
+    endif ()
     set (${HDF_PREFIX}_HAVE_GETTIMEOFDAY 1)
     set (${HDF_PREFIX}_HAVE_LIBWS2_32 1)
     set (${HDF_PREFIX}_HAVE_LIBWSOCK32 1)
   endif ()
-  message (TRACE "HAVE_TIMEZONE=${${HDF_PREFIX}_HAVE_TIMEZONE}")
 endif ()
 
 # ----------------------------------------------------------------------
@@ -141,13 +144,13 @@ else ()
   set(C_INCLUDE_QUADMATH_H 0)
 endif ()
 
-if (MINGW OR CYGWIN)
+if (CYGWIN)
   set (CMAKE_REQUIRED_DEFINITIONS "${CMAKE_REQUIRED_DEFINITIONS} -D_GNU_SOURCE")
   add_definitions ("-D_GNU_SOURCE")
 endif ()
 
 #-----------------------------------------------------------------------------
-#  Library checks
+#  Check for the math library "m"
 #-----------------------------------------------------------------------------
 if (MINGW OR NOT WINDOWS)
   CHECK_LIBRARY_EXISTS_CONCAT ("m" ceil     ${HDF_PREFIX}_HAVE_LIBM)
@@ -400,12 +403,7 @@ endif ()
 #-----------------------------------------------------------------------------
 # Check for some functions that are used
 #
-if (NOT MINGW)
-  # alarm(2) support is spotty in MinGW, so assume it doesn't exist
-  #
-  # https://lists.gnu.org/archive/html/bug-gnulib/2013-03/msg00040.html
-  CHECK_FUNCTION_EXISTS (alarm             ${HDF_PREFIX}_HAVE_ALARM)
-endif ()
+CHECK_FUNCTION_EXISTS (alarm             ${HDF_PREFIX}_HAVE_ALARM)
 CHECK_FUNCTION_EXISTS (fcntl             ${HDF_PREFIX}_HAVE_FCNTL)
 CHECK_FUNCTION_EXISTS (flock             ${HDF_PREFIX}_HAVE_FLOCK)
 CHECK_FUNCTION_EXISTS (fork              ${HDF_PREFIX}_HAVE_FORK)
@@ -415,6 +413,8 @@ CHECK_FUNCTION_EXISTS (getrusage         ${HDF_PREFIX}_HAVE_GETRUSAGE)
 
 CHECK_FUNCTION_EXISTS (pread             ${HDF_PREFIX}_HAVE_PREAD)
 CHECK_FUNCTION_EXISTS (pwrite            ${HDF_PREFIX}_HAVE_PWRITE)
+CHECK_FUNCTION_EXISTS (rand_r            ${HDF_PREFIX}_HAVE_RAND_R)
+CHECK_FUNCTION_EXISTS (random            ${HDF_PREFIX}_HAVE_RANDOM)
 
 CHECK_FUNCTION_EXISTS (strcasestr        ${HDF_PREFIX}_HAVE_STRCASESTR)
 CHECK_FUNCTION_EXISTS (strdup            ${HDF_PREFIX}_HAVE_STRDUP)
@@ -438,14 +438,16 @@ endif ()
 #-----------------------------------------------------------------------------
 # Check a bunch of other functions
 #-----------------------------------------------------------------------------
-foreach (other_test
-    HAVE_ATTRIBUTE
-    HAVE_BUILTIN_EXPECT
-    PTHREAD_BARRIER
-    HAVE_SOCKLEN_T
+if (MINGW OR NOT WINDOWS)
+  foreach (other_test
+      HAVE_ATTRIBUTE
+      HAVE_BUILTIN_EXPECT
+      SYSTEM_SCOPE_THREADS
+      HAVE_SOCKLEN_T
   )
-  HDF_FUNCTION_TEST (${other_test})
-endforeach ()
+    HDF_FUNCTION_TEST (${other_test})
+  endforeach ()
+endif ()
 
 # ----------------------------------------------------------------------
 # Set the flag to indicate that the machine can handle converting
@@ -583,6 +585,12 @@ if (MINGW OR NOT WINDOWS)
   endif ()
 endif ()
 
+# Check for clock_gettime() CLOCK_MONOTONIC_COARSE
+set (CMAKE_EXTRA_INCLUDE_FILES time.h)
+check_type_size(CLOCK_MONOTONIC_COARSE CLOCK_MONOTONIC_COARSE_SIZE)
+if (HAVE_CLOCK_MONOTONIC_COARSE_SIZE)
+  set (${HDF_PREFIX}_HAVE_CLOCK_MONOTONIC_COARSE 1)
+endif ()
 unset (CMAKE_EXTRA_INCLUDE_FILES)
 
 #-----------------------------------------------------------------------------
@@ -828,71 +836,6 @@ macro (H5ConversionTests TEST def msg)
     endif ()
   endif ()
 endmacro ()
-
-#-----------------------------------------------------------------------------
-# Check for complex number support
-#-----------------------------------------------------------------------------
-message (STATUS "Checking if complex number support is available")
-CHECK_INCLUDE_FILE (complex.h ${HDF_PREFIX}_HAVE_COMPLEX_H)
-if (${HDF_PREFIX}_HAVE_COMPLEX_H)
-  set (H5_HAVE_C99_COMPLEX_NUMBERS 1)
-
-  HDF_CHECK_TYPE_SIZE ("float _Complex" ${HDF_PREFIX}_SIZEOF_FLOAT_COMPLEX)
-  HDF_CHECK_TYPE_SIZE ("double _Complex" ${HDF_PREFIX}_SIZEOF_DOUBLE_COMPLEX)
-  HDF_CHECK_TYPE_SIZE ("long double _Complex" ${HDF_PREFIX}_SIZEOF_LONG_DOUBLE_COMPLEX)
-
-  if (MSVC AND NOT ${HDF_PREFIX}_SIZEOF_FLOAT_COMPLEX AND NOT ${HDF_PREFIX}_SIZEOF_DOUBLE_COMPLEX
-      AND NOT ${HDF_PREFIX}_SIZEOF_LONG_DOUBLE_COMPLEX)
-    # If using MSVC, the _Complex types (if available) are _Fcomplex, _Dcomplex and _Lcomplex.
-    # The standard types are checked for first in case MSVC uses them in the future or in case
-    # the compiler used is simulating MSVC and uses the standard types.
-    cmake_push_check_state()
-    list (APPEND CMAKE_EXTRA_INCLUDE_FILES complex.h)
-    HDF_CHECK_TYPE_SIZE ("_Fcomplex" ${HDF_PREFIX}_SIZEOF__FCOMPLEX)
-    HDF_CHECK_TYPE_SIZE ("_Dcomplex" ${HDF_PREFIX}_SIZEOF__DCOMPLEX)
-    HDF_CHECK_TYPE_SIZE ("_Lcomplex" ${HDF_PREFIX}_SIZEOF__LCOMPLEX)
-    cmake_pop_check_state()
-    if (${HDF_PREFIX}_SIZEOF__FCOMPLEX AND ${HDF_PREFIX}_SIZEOF__DCOMPLEX AND
-        ${HDF_PREFIX}_SIZEOF__FCOMPLEX)
-      set (${HDF_PREFIX}_SIZEOF_FLOAT_COMPLEX ${${HDF_PREFIX}_SIZEOF__FCOMPLEX}
-           CACHE INTERNAL "SizeOf for float _Complex" FORCE)
-      set (${HDF_PREFIX}_SIZEOF_DOUBLE_COMPLEX ${${HDF_PREFIX}_SIZEOF__DCOMPLEX}
-           CACHE INTERNAL "SizeOf for double _Complex" FORCE)
-      set (${HDF_PREFIX}_SIZEOF_LONG_DOUBLE_COMPLEX ${${HDF_PREFIX}_SIZEOF__LCOMPLEX}
-           CACHE INTERNAL "SizeOf for long double _Complex" FORCE)
-
-      unset (H5_HAVE_C99_COMPLEX_NUMBERS)
-    endif ()
-  endif ()
-
-  if (${HDF_PREFIX}_SIZEOF_FLOAT_COMPLEX AND ${HDF_PREFIX}_SIZEOF_DOUBLE_COMPLEX AND
-      ${HDF_PREFIX}_SIZEOF_LONG_DOUBLE_COMPLEX)
-    # Check if __STDC_NO_COMPLEX__ macro is defined, in which case complex number
-    # support is not available
-    HDF_FUNCTION_TEST (HAVE_STDC_NO_COMPLEX)
-
-    if (NOT H5_HAVE_STDC_NO_COMPLEX)
-      # Compile simple test program with complex numbers
-      HDF_FUNCTION_TEST (HAVE_COMPLEX_NUMBERS)
-
-      if (H5_HAVE_COMPLEX_NUMBERS)
-        if (H5_HAVE_C99_COMPLEX_NUMBERS)
-          message (STATUS "Using C99 complex number types")
-        else ()
-          message (STATUS "Using MSVC complex number types")
-        endif ()
-      else ()
-        message (STATUS "Complex number support has been disabled since a simple test program couldn't be compiled and linked")
-      endif ()
-    else ()
-      message (STATUS "Complex number support has been disabled since __STDC_NO_COMPLEX__ is defined")
-    endif ()
-  else ()
-    message (STATUS "Complex number support has been disabled since the C types were not found")
-  endif ()
-else ()
-  message (STATUS "Complex number support has been disabled since the complex.h header was not found")
-endif ()
 
 #-----------------------------------------------------------------------------
 # Check various conversion capabilities

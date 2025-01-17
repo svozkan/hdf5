@@ -4,7 +4,7 @@
  *                                                                           *
  * This file is part of HDF5.  The full HDF5 copyright notice, including     *
  * terms governing use, modification, and redistribution, is contained in    *
- * the LICENSE file, which can be found at the root of the source code       *
+ * the COPYING file, which can be found at the root of the source code       *
  * distribution tree, or in https://www.hdfgroup.org/licenses.               *
  * If you do not have access to either file, you may request a copy from     *
  * help@hdfgroup.org.                                                        *
@@ -42,8 +42,7 @@ H5O_SHARED_DECODE(H5F_t *f, H5O_t *open_oh, unsigned mesg_flags, unsigned *iofla
 {
     void *ret_value = NULL; /* Return value */
 
-    /* H5O_SHARED_DECODE will be defined as a package function */
-    FUNC_ENTER_PACKAGE
+    FUNC_ENTER_NOAPI_NOINIT
 
 #ifndef H5O_SHARED_TYPE
 #error "Need to define H5O_SHARED_TYPE macro!"
@@ -98,8 +97,7 @@ H5O_SHARED_ENCODE(H5F_t *f, bool disable_shared, size_t H5_ATTR_UNUSED p_size, u
         (const H5O_shared_t *)_mesg; /* Pointer to shared message portion of actual message */
     herr_t ret_value = SUCCEED;      /* Return value */
 
-    /* H5O_SHARED_ENCODE will be defined as a package function */
-    FUNC_ENTER_PACKAGE
+    FUNC_ENTER_NOAPI_NOINIT
 
 #ifndef H5O_SHARED_TYPE
 #error "Need to define H5O_SHARED_TYPE macro!"
@@ -150,8 +148,7 @@ H5O_SHARED_SIZE(const H5F_t *f, bool disable_shared, const void *_mesg)
         (const H5O_shared_t *)_mesg; /* Pointer to shared message portion of actual message */
     size_t ret_value = 0;            /* Return value */
 
-    /* H5O_SHARED_SIZE will be defined as a package function */
-    FUNC_ENTER_PACKAGE
+    FUNC_ENTER_NOAPI_NOINIT
 
 #ifndef H5O_SHARED_TYPE
 #error "Need to define H5O_SHARED_TYPE macro!"
@@ -198,7 +195,6 @@ H5O_SHARED_DELETE(H5F_t *f, H5O_t *open_oh, void *_mesg)
     H5O_shared_t *sh_mesg   = (H5O_shared_t *)_mesg; /* Pointer to shared message portion of actual message */
     herr_t        ret_value = SUCCEED;               /* Return value */
 
-    /* H5O_SHARED_DELETE will be defined as a package function */
     FUNC_ENTER_PACKAGE
 
 #ifndef H5O_SHARED_TYPE
@@ -245,7 +241,6 @@ H5O_SHARED_LINK(H5F_t *f, H5O_t *open_oh, void *_mesg)
     H5O_shared_t *sh_mesg   = (H5O_shared_t *)_mesg; /* Pointer to shared message portion of actual message */
     herr_t        ret_value = SUCCEED;               /* Return value */
 
-    /* H5O_SHARED_LINK will be defined as a package function */
     FUNC_ENTER_PACKAGE
 
 #ifndef H5O_SHARED_TYPE
@@ -292,7 +287,6 @@ H5O_SHARED_COPY_FILE(H5F_t *file_src, void *_native_src, H5F_t *file_dst, bool *
     void *dst_mesg  = NULL; /* Destination message */
     void *ret_value = NULL; /* Return value */
 
-    /* H5O_SHARED_COPY_FILE will be defined as a package function */
     FUNC_ENTER_PACKAGE
 
 #ifndef H5O_SHARED_TYPE
@@ -353,8 +347,7 @@ H5O_SHARED_POST_COPY_FILE(const H5O_loc_t H5_ATTR_NDEBUG_UNUSED *oloc_src, const
     H5O_shared_t *shared_dst = (H5O_shared_t *)mesg_dst; /* Alias to shared info in native destination */
     herr_t        ret_value  = SUCCEED;                  /* Return value */
 
-    /* H5O_SHARED_POST_COPY_FILE will be defined as a package function */
-    FUNC_ENTER_PACKAGE
+    FUNC_ENTER_NOAPI_NOINIT
 
     assert(oloc_src->file);
     assert(oloc_dst->file);
@@ -416,8 +409,7 @@ H5O_SHARED_DEBUG(H5F_t *f, const void *_mesg, FILE *stream, int indent, int fwid
         (const H5O_shared_t *)_mesg; /* Pointer to shared message portion of actual message */
     herr_t ret_value = SUCCEED;      /* Return value */
 
-    /* H5O_SHARED_DEBUG will be defined as a package function */
-    FUNC_ENTER_PACKAGE
+    FUNC_ENTER_NOAPI_NOINIT
 
 #ifndef H5O_SHARED_TYPE
 #error "Need to define H5O_SHARED_TYPE macro!"

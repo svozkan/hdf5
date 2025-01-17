@@ -4,7 +4,7 @@
  *                                                                           *
  * This file is part of HDF5.  The full HDF5 copyright notice, including     *
  * terms governing use, modification, and redistribution, is contained in    *
- * the LICENSE file, which can be found at the root of the source code       *
+ * the COPYING file, which can be found at the root of the source code       *
  * distribution tree, or in https://www.hdfgroup.org/licenses.               *
  * If you do not have access to either file, you may request a copy from     *
  * help@hdfgroup.org.                                                        *
@@ -180,49 +180,27 @@ H5G__traverse_ud(const H5G_loc_t *grp_loc /*in,out*/, const H5O_link_t *lnk, H5G
     if ((cur_grp = H5VL_wrap_register(H5I_GROUP, grp, false)) < 0)
         HGOTO_ERROR(H5E_SYM, H5E_CANTREGISTER, FAIL, "unable to register group");
 
-    /* Pause recording errors, if we are just checking for object's existence */
-    if (target & H5G_TARGET_EXISTS)
-        H5E_pause_stack();
-
-        /* Invoke user-defined callback function */
+        /* User-defined callback function */
 #ifndef H5_NO_DEPRECATED_SYMBOLS
     /* (Backwardly compatible with v0 H5L_class_t traversal callback) */
-    if (link_class->version == H5L_LINK_CLASS_T_VERS_0) {
-        /* Prepare & restore library for user callback */
-        H5_BEFORE_USER_CB(FAIL)
-            {
-                cb_return = (((const H5L_class_0_t *)link_class)->trav_func)(
-                    lnk->name, cur_grp, lnk->u.ud.udata, lnk->u.ud.size, H5CX_get_lapl());
-            }
-        H5_AFTER_USER_CB(FAIL)
-    }
-    else {
-        /* Prepare & restore library for user callback */
-        H5_BEFORE_USER_CB(FAIL)
-            {
-                cb_return = (link_class->trav_func)(lnk->name, cur_grp, lnk->u.ud.udata, lnk->u.ud.size,
-                                                    H5CX_get_lapl(), H5CX_get_dxpl());
-            }
-        H5_AFTER_USER_CB(FAIL)
-    }
+    if (link_class->version == H5L_LINK_CLASS_T_VERS_0)
+        cb_return = (((const H5L_class_0_t *)link_class)->trav_func)(lnk->name, cur_grp, lnk->u.ud.udata,
+                                                                     lnk->u.ud.size, H5CX_get_lapl());
+    else
+        cb_return = (link_class->trav_func)(lnk->name, cur_grp, lnk->u.ud.udata, lnk->u.ud.size,
+                                            H5CX_get_lapl(), H5CX_get_dxpl());
 #else  /* H5_NO_DEPRECATED_SYMBOLS */
-    /* Prepare & restore library for user callback */
-    H5_BEFORE_USER_CB(FAIL)
-        {
-            cb_return = (link_class->trav_func)(lnk->name, cur_grp, lnk->u.ud.udata, lnk->u.ud.size,
-                                                H5CX_get_lapl(), H5CX_get_dxpl());
-        }
-    H5_AFTER_USER_CB(FAIL)
+    cb_return = (link_class->trav_func)(lnk->name, cur_grp, lnk->u.ud.udata, lnk->u.ud.size, H5CX_get_lapl(),
+                                        H5CX_get_dxpl());
 #endif /* H5_NO_DEPRECATED_SYMBOLS */
-
-    /* Resume recording errors, if we were just checking for object's existence */
-    if (target & H5G_TARGET_EXISTS)
-        H5E_resume_stack();
 
     /* Check for failing to locate the object */
     if (cb_return < 0) {
         /* Check if we just needed to know if the object exists */
         if (target & H5G_TARGET_EXISTS) {
+            /* Clear any errors from the stack */
+            H5E_clear_stack();
+
             /* Indicate that the object doesn't exist */
             *obj_exists = false;
 

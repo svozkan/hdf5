@@ -4,7 +4,7 @@
  *                                                                           *
  * This file is part of HDF5.  The full HDF5 copyright notice, including     *
  * terms governing use, modification, and redistribution, is contained in    *
- * the LICENSE file, which can be found at the root of the source code       *
+ * the COPYING file, which can be found at the root of the source code       *
  * distribution tree, or in https://www.hdfgroup.org/licenses.               *
  * If you do not have access to either file, you may request a copy from     *
  * help@hdfgroup.org.                                                        *
@@ -20,20 +20,23 @@
  *              With custom modifications...
  */
 
-#include "H5FDmodule.h" /* This source code file is part of the H5FD module */
+#include "H5FDdrvr_module.h" /* This source code file is part of the H5FD driver module */
 
 #include "H5private.h"   /* Generic Functions    */
 #include "H5Eprivate.h"  /* Error handling       */
 #include "H5Fprivate.h"  /* File access          */
+#include "H5FDprivate.h" /* File drivers         */
 #include "H5FDlog.h"     /* Logging file driver  */
-#include "H5FDpkg.h"     /* File drivers         */
 #include "H5FLprivate.h" /* Free Lists           */
 #include "H5Iprivate.h"  /* IDs                  */
 #include "H5MMprivate.h" /* Memory management    */
 #include "H5Pprivate.h"  /* Property lists       */
 
 /* The driver identification number, initialized at runtime */
-hid_t H5FD_LOG_id_g = H5I_INVALID_HID;
+static hid_t H5FD_LOG_g = 0;
+
+/* Whether to ignore file locks when disabled (env var value) */
+static htri_t ignore_disabled_file_locks_s = FAIL;
 
 /* Driver-specific file access properties */
 typedef struct H5FD_log_fapl_t {
@@ -129,7 +132,29 @@ typedef struct H5FD_log_t {
     H5FD_log_fapl_t    fa;                  /* Driver-specific file access properties           */
 } H5FD_log_t;
 
+/*
+ * These macros check for overflow of various quantities.  These macros
+ * assume that HDoff_t is signed and haddr_t and size_t are unsigned.
+ *
+ * ADDR_OVERFLOW:   Checks whether a file address of type `haddr_t'
+ *                  is too large to be represented by the second argument
+ *                  of the file seek function.
+ *
+ * SIZE_OVERFLOW:   Checks whether a buffer size of type `hsize_t' is too
+ *                  large to be represented by the `size_t' type.
+ *
+ * REGION_OVERFLOW: Checks whether an address and size pair describe data
+ *                  which can be addressed entirely by the second
+ *                  argument of the file seek function.
+ */
+#define MAXADDR          (((haddr_t)1 << (8 * sizeof(HDoff_t) - 1)) - 1)
+#define ADDR_OVERFLOW(A) (HADDR_UNDEF == (A) || ((A) & ~(haddr_t)MAXADDR))
+#define SIZE_OVERFLOW(Z) ((Z) & ~(hsize_t)MAXADDR)
+#define REGION_OVERFLOW(A, Z)                                                                                \
+    (ADDR_OVERFLOW(A) || SIZE_OVERFLOW(Z) || HADDR_UNDEF == (A) + (Z) || (HDoff_t)((A) + (Z)) < (HDoff_t)(A))
+
 /* Prototypes */
+static herr_t  H5FD__log_term(void);
 static void   *H5FD__log_fapl_get(H5FD_t *file);
 static void   *H5FD__log_fapl_copy(const void *_old_fa);
 static herr_t  H5FD__log_fapl_free(void *_fa);
@@ -156,9 +181,9 @@ static const H5FD_class_t H5FD_log_g = {
     H5FD_CLASS_VERSION,      /* struct version      */
     H5FD_LOG_VALUE,          /* value               */
     "log",                   /* name                */
-    H5FD_MAXADDR,            /* maxaddr             */
+    MAXADDR,                 /* maxaddr             */
     H5F_CLOSE_WEAK,          /* fc_degree           */
-    NULL,                    /* terminate           */
+    H5FD__log_term,          /* terminate           */
     NULL,                    /* sb_size             */
     NULL,                    /* sb_encode           */
     NULL,                    /* sb_decode           */
@@ -202,48 +227,61 @@ static const H5FD_log_fapl_t H5FD_log_default_config_g = {NULL, H5FD_LOG_LOC_IO 
 H5FL_DEFINE_STATIC(H5FD_log_t);
 
 /*-------------------------------------------------------------------------
- * Function:    H5FD__log_register
+ * Function:    H5FD_log_init
  *
- * Purpose:     Register the driver with the library.
+ * Purpose:     Initialize this driver by registering the driver with the
+ *              library.
  *
- * Return:      SUCCEED/FAIL
+ * Return:      Success:    The driver ID for the log driver
+ *              Failure:    H5I_INVALID_HID
  *
  *-------------------------------------------------------------------------
  */
-herr_t
-H5FD__log_register(void)
+hid_t
+H5FD_log_init(void)
 {
-    herr_t ret_value = SUCCEED; /* Return value */
+    char *lock_env_var = NULL;            /* Environment variable pointer */
+    hid_t ret_value    = H5I_INVALID_HID; /* Return value */
 
-    FUNC_ENTER_PACKAGE
+    FUNC_ENTER_NOAPI_NOERR
 
-    if (H5I_VFL != H5I_get_type(H5FD_LOG_id_g))
-        if ((H5FD_LOG_id_g = H5FD_register(&H5FD_log_g, sizeof(H5FD_class_t), false)) < 0)
-            HGOTO_ERROR(H5E_VFL, H5E_CANTREGISTER, FAIL, "unable to register log driver");
+    /* Check the use disabled file locks environment variable */
+    lock_env_var = getenv(HDF5_USE_FILE_LOCKING);
+    if (lock_env_var && !strcmp(lock_env_var, "BEST_EFFORT"))
+        ignore_disabled_file_locks_s = true; /* Override: Ignore disabled locks */
+    else if (lock_env_var && (!strcmp(lock_env_var, "TRUE") || !strcmp(lock_env_var, "1")))
+        ignore_disabled_file_locks_s = false; /* Override: Don't ignore disabled locks */
+    else
+        ignore_disabled_file_locks_s = FAIL; /* Environment variable not set, or not set correctly */
 
-done:
+    if (H5I_VFL != H5I_get_type(H5FD_LOG_g))
+        H5FD_LOG_g = H5FD_register(&H5FD_log_g, sizeof(H5FD_class_t), false);
+
+    /* Set return value */
+    ret_value = H5FD_LOG_g;
+
     FUNC_LEAVE_NOAPI(ret_value)
-} /* end H5FD__log_register() */
+} /* end H5FD_log_init() */
 
 /*---------------------------------------------------------------------------
- * Function:    H5FD__log_unregister
+ * Function:    H5FD__log_term
  *
- * Purpose:     Reset library driver info.
+ * Purpose:     Shut down the VFD
  *
  * Returns:     SUCCEED (Can't fail)
  *
  *---------------------------------------------------------------------------
  */
-herr_t
-H5FD__log_unregister(void)
+static herr_t
+H5FD__log_term(void)
 {
     FUNC_ENTER_PACKAGE_NOERR
 
     /* Reset VFL ID */
-    H5FD_LOG_id_g = H5I_INVALID_HID;
+    H5FD_LOG_g = 0;
 
     FUNC_LEAVE_NOAPI(SUCCEED)
-} /* end H5FD__log_unregister() */
+} /* end H5FD__log_term() */
 
 /*-------------------------------------------------------------------------
  * Function:    H5Pset_fapl_log
@@ -270,7 +308,7 @@ H5Pset_fapl_log(hid_t fapl_id, const char *logfile, unsigned long long flags, si
     memset(&fa, 0, sizeof(H5FD_log_fapl_t));
 
     /* Check arguments */
-    if (NULL == (plist = H5P_object_verify(fapl_id, H5P_FILE_ACCESS, false)))
+    if (NULL == (plist = H5P_object_verify(fapl_id, H5P_FILE_ACCESS)))
         HGOTO_ERROR(H5E_ARGS, H5E_BADTYPE, FAIL, "not a file access property list");
 
     /* Duplicate the log file string
@@ -429,7 +467,7 @@ H5FD__log_open(const char *name, unsigned flags, hid_t fapl_id, haddr_t maxaddr)
         HGOTO_ERROR(H5E_ARGS, H5E_BADVALUE, NULL, "invalid file name");
     if (0 == maxaddr || HADDR_UNDEF == maxaddr)
         HGOTO_ERROR(H5E_ARGS, H5E_BADRANGE, NULL, "bogus maxaddr");
-    if (H5FD_ADDR_OVERFLOW(maxaddr))
+    if (ADDR_OVERFLOW(maxaddr))
         HGOTO_ERROR(H5E_ARGS, H5E_OVERFLOW, NULL, "bogus maxaddr");
 
     /* Initialize timers */
@@ -446,7 +484,7 @@ H5FD__log_open(const char *name, unsigned flags, hid_t fapl_id, haddr_t maxaddr)
         o_flags |= O_EXCL;
 
     /* Get the driver specific information */
-    if (NULL == (plist = H5P_object_verify(fapl_id, H5P_FILE_ACCESS, true)))
+    if (NULL == (plist = H5P_object_verify(fapl_id, H5P_FILE_ACCESS)))
         HGOTO_ERROR(H5E_ARGS, H5E_BADTYPE, NULL, "not a file access property list");
     if (NULL == (fa = (const H5FD_log_fapl_t *)H5P_peek_driver_info(plist))) {
         /* Use default driver configuration*/
@@ -561,9 +599,9 @@ H5FD__log_open(const char *name, unsigned flags, hid_t fapl_id, haddr_t maxaddr)
     }
 
     /* Check the file locking flags in the fapl */
-    if (H5FD_ignore_disabled_file_locks_p != FAIL)
+    if (ignore_disabled_file_locks_s != FAIL)
         /* The environment variable was set, so use that preferentially */
-        file->ignore_disabled_file_locks = H5FD_ignore_disabled_file_locks_p;
+        file->ignore_disabled_file_locks = ignore_disabled_file_locks_s;
     else {
         /* Use the value in the property list */
         if (H5P_get(plist, H5F_ACS_IGNORE_DISABLED_FILE_LOCKS_NAME, &file->ignore_disabled_file_locks) < 0)
@@ -1099,7 +1137,7 @@ H5FD__log_read(H5FD_t *_file, H5FD_mem_t type, hid_t H5_ATTR_UNUSED dxpl_id, had
     /* Check for overflow conditions */
     if (!H5_addr_defined(addr))
         HGOTO_ERROR(H5E_ARGS, H5E_BADVALUE, FAIL, "addr undefined, addr = %llu", (unsigned long long)addr);
-    if (H5FD_REGION_OVERFLOW(addr, size))
+    if (REGION_OVERFLOW(addr, size))
         HGOTO_ERROR(H5E_ARGS, H5E_OVERFLOW, FAIL, "addr overflow, addr = %llu", (unsigned long long)addr);
 
     /* Log the I/O information about the read */
@@ -1187,7 +1225,7 @@ H5FD__log_read(H5FD_t *_file, H5FD_mem_t type, hid_t H5_ATTR_UNUSED dxpl_id, had
             if (bytes_read > 0)
                 offset += bytes_read;
 #else
-            bytes_read = HDread(file->fd, buf, bytes_in);
+            bytes_read  = HDread(file->fd, buf, bytes_in);
 #endif /* H5_HAVE_PREADWRITE */
         } while (-1 == bytes_read && EINTR == errno);
 
@@ -1323,7 +1361,7 @@ H5FD__log_write(H5FD_t *_file, H5FD_mem_t type, hid_t H5_ATTR_UNUSED dxpl_id, ha
     /* Check for overflow conditions */
     if (!H5_addr_defined(addr))
         HGOTO_ERROR(H5E_ARGS, H5E_BADVALUE, FAIL, "addr undefined, addr = %llu", (unsigned long long)addr);
-    if (H5FD_REGION_OVERFLOW(addr, size))
+    if (REGION_OVERFLOW(addr, size))
         HGOTO_ERROR(H5E_ARGS, H5E_OVERFLOW, FAIL, "addr overflow, addr = %llu, size = %llu",
                     (unsigned long long)addr, (unsigned long long)size);
 

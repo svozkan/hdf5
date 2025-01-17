@@ -4,7 +4,7 @@
  *                                                                           *
  * This file is part of HDF5.  The full HDF5 copyright notice, including     *
  * terms governing use, modification, and redistribution, is contained in    *
- * the LICENSE file, which can be found at the root of the source code       *
+ * the COPYING file, which can be found at the root of the source code       *
  * distribution tree, or in https://www.hdfgroup.org/licenses.               *
  * If you do not have access to either file, you may request a copy from     *
  * help@hdfgroup.org.                                                        *
@@ -175,7 +175,6 @@ print_type(hid_t type)
         case H5T_ENUM:
         case H5T_VLEN:
         case H5T_ARRAY:
-        case H5T_COMPLEX:
         case H5T_NO_CLASS:
         case H5T_NCLASSES:
         default:
@@ -310,9 +309,6 @@ get_class(H5T_class_t tclass)
 
         case H5T_ARRAY:
             return ("H5T_ARRAY");
-
-        case H5T_COMPLEX:
-            return ("H5T_COMPLEX");
 
         case H5T_NO_CLASS:
         case H5T_NCLASSES:

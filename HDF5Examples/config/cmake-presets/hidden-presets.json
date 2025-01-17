@@ -109,13 +109,6 @@
       "hidden": true
     },
     {
-      "name": "ci-HL",
-      "hidden": true,
-      "cacheVariables": {
-        "H5EX_BUILD_HL": "ON"
-      }
-    },
-    {
       "name": "ci-Fortran",
       "hidden": true,
       "cacheVariables": {
@@ -139,7 +132,7 @@
       "name": "ci-CPP",
       "hidden": true,
       "cacheVariables": {
-        "H5EX_BUILD_CXX": "ON"
+        "H5EX_BUILD_CPP_LIB": "ON"
       }
     },
     {
